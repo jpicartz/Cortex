@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+/*
+  Class-based dark mode. The theme class is written to <html> by an inline
+  script in layout.tsx before paint, so there is no flash.
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  `@theme inline` (rather than plain `@theme`) is what lets these map to
+  runtime custom properties instead of being frozen at build time — which is
+  the whole point, since the same utility has to resolve differently in light
+  mode, dark mode, and under each per-state accent.
+*/
+@theme inline {
+  --color-page: var(--c-page);
+  --color-card: var(--c-card);
+  --color-raised: var(--c-raised);
+
+  --color-fg: var(--c-fg);
+  --color-fg-soft: var(--c-fg-soft);
+  --color-fg-mute: var(--c-fg-mute);
+  --color-edge: var(--c-edge);
+
+  /* Swapped per state via [data-accent] below. One token, ten states. */
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-fill: var(--c-accent-fill);
+  --color-on-accent: var(--c-on-accent);
+
+  --font-display: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+
+  --radius-tile: 14px;
+  --radius-card: 18px;
+  --radius-modal: 22px;
+}
+
+@layer base {
+  :root {
+    /* Warm, low-contrast light mode — easier on eyes that are already tired. */
+    --c-page: oklch(0.975 0.005 85);
+    --c-card: oklch(1 0 0);
+    --c-raised: oklch(0.985 0.004 85);
+
+    --c-fg: oklch(0.22 0.012 265);
+    --c-fg-soft: oklch(0.44 0.014 265);
+    --c-fg-mute: oklch(0.53 0.014 265);
+    --c-edge: oklch(0.905 0.006 85);
+
+    --c-on-accent: oklch(1 0 0);
+
+    /* Lightness ramps. Hue is supplied per accent, below. */
+    --l-accent: 0.62;
+    --l-accent-ink: 0.45;
+    --l-accent-fill: 0.5;
+    --chroma: 0.14;
+
+    /* Default hue; each [data-accent='…'] rule below overrides it. */
+    --hue: 240;
+
+    color-scheme: light;
+  }
+
+  .dark {
+    /* Deep night blue. A lot of this app gets opened at 1am. */
+    --c-page: oklch(0.185 0.022 265);
+    --c-card: oklch(0.235 0.024 265);
+    --c-raised: oklch(0.275 0.025 265);
+
+    --c-fg: oklch(0.97 0.005 265);
+    --c-fg-soft: oklch(0.77 0.016 265);
+    --c-fg-mute: oklch(0.67 0.018 265);
+    --c-edge: oklch(0.33 0.025 265);
+
+    /* Dark mode pairs a light accent with dark text on top of it. */
+    --c-on-accent: oklch(0.18 0.02 265);
+
+    --l-accent: 0.78;
+    --l-accent-ink: 0.82;
+    --l-accent-fill: 0.78;
+    --chroma: 0.12;
+
+    color-scheme: dark;
+  }
+
+  /*
+    Each state sets data-accent on a wrapper; every accent utility below it
+    resolves to that hue. Adding an accent is one line here plus one entry in
+    ACCENTS in content/schema.ts.
+  */
+  [data-accent='sky'] { --hue: 240; }
+  [data-accent='amber'] { --hue: 75; }
+  [data-accent='violet'] { --hue: 300; }
+  [data-accent='teal'] { --hue: 185; }
+  [data-accent='rose'] { --hue: 15; }
+  [data-accent='orange'] { --hue: 50; }
+  [data-accent='fuchsia'] { --hue: 330; }
+  [data-accent='indigo'] { --hue: 275; }
+  [data-accent='cyan'] { --hue: 210; }
+  [data-accent='emerald'] { --hue: 155; }
+
+  /*
+    The derived accent triple. Deliberately does NOT declare --hue: a custom
+    property that references itself (`--hue: var(--hue, 240)`) is invalid at
+    computed-value time and silently kills the whole chain, which is exactly
+    the bug that made every accent render grey.
+
+    The default lives on :root above; each [data-accent='…'] rule overrides it.
+  */
+  :root,
+  [data-accent] {
+    --c-accent: oklch(var(--l-accent) var(--chroma) var(--hue));
+    --c-accent-ink: oklch(var(--l-accent-ink) var(--chroma) var(--hue));
+    --c-accent-fill: oklch(var(--l-accent-fill) var(--chroma) var(--hue));
+  }
+
+  body {
+    background-color: var(--c-page);
+    color: var(--c-fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  /* Never let a focus ring disappear — this app gets keyboard use. */
+  :focus-visible {
+    outline: 2px solid var(--c-accent-ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/*
+  ── Motion ────────────────────────────────────────────────────────────────
+  Calm easing, no overshoot, no spring. This is an app for people who are
+  already activated; bouncy physics is the wrong signal.
+*/
+@layer components {
+  /*
+    Two buttons is the whole system. Anything that needs a third variant
+    probably wants to be a link instead.
+  */
+  .btn-accent {
+    background-color: var(--c-accent-fill);
+    color: var(--c-on-accent);
+    border-radius: 9999px;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition: opacity 160ms ease;
+  }
+  .btn-accent:hover { opacity: 0.9; }
+  .btn-accent:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-quiet {
+    background-color: var(--c-raised);
+    color: var(--c-fg-soft);
+    border: 1px solid var(--c-edge);
+    border-radius: 9999px;
+    padding: 0.5rem 1.15rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  .btn-quiet:hover { color: var(--c-fg); border-color: var(--c-fg-mute); }
+}
+
+@layer utilities {
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .animate-rise {
+    animation: rise 380ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* Section stagger: --i is set inline per section. */
+  .stagger {
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+}
+
+/*
+  View Transitions: the menu card's icon morphs into the detail header.
+  Native, GPU-composited, and a no-op in browsers without support.
+*/
+::view-transition-group(*) {
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/*
+  Accessibility requirement AND product requirement: someone mid-panic-attack
+  is exactly the person who needs motion off.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
