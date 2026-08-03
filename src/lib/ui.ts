@@ -17,6 +17,16 @@ export const UI = {
     en: 'Understand your brain. Change how you feel.',
   },
 
+  // ── Hero ────────────────────────────────────────────────────────────────
+  heroLine: {
+    es: 'Lo que sientes tiene un mecanismo.',
+    en: 'What you feel has a mechanism.',
+  },
+  heroSupport: {
+    es: 'No estás roto y no es falta de voluntad. Entiende qué está haciendo tu cerebro ahora mismo, y qué hacer para cambiarlo en los próximos cinco minutos.',
+    en: 'You are not broken and it is not a lack of willpower. Understand what your brain is doing right now, and what to do about it in the next five minutes.',
+  },
+
   // ── Menu ────────────────────────────────────────────────────────────────
   menuHeading: { es: '¿Cómo te sientes?', en: 'How are you feeling?' },
   menuHelp: {

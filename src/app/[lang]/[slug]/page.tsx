@@ -74,7 +74,7 @@ export default async function StatePage({
       </Link>
 
       {/* ── Header. The icon is the morph target from the menu card. ───── */}
-      <header className="animate-rise mt-6 flex items-start gap-4">
+      <header className="mt-6 flex items-start gap-4">
         <span
           className="grid size-14 shrink-0 place-items-center rounded-card bg-accent/12 text-accent-ink"
           style={{ viewTransitionName: `icon-${state.id}` }}
@@ -90,16 +90,18 @@ export default async function StatePage({
       </header>
 
       {/* ── FEEL: recognition before explanation. ───────────────────────── */}
-      <section
-        className="animate-rise stagger mt-10"
-        style={{ '--i': 1 } as React.CSSProperties}
-      >
+      <section className="mt-10">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionFeel[lang]}
         </h2>
         <ul className="mt-4 space-y-2.5">
-          {state.feel[lang].map((line) => (
-            <li key={line} className="flex gap-3 text-[1.0625rem] leading-relaxed text-fg-soft">
+          {state.feel[lang].map((line, i) => (
+            <li
+              key={line}
+              data-reveal="rise"
+              style={{ '--i': i } as React.CSSProperties}
+              className="flex gap-3 text-[1.0625rem] leading-relaxed text-fg-soft"
+            >
               <span
                 aria-hidden="true"
                 className="mt-[0.65rem] size-1.5 shrink-0 rounded-full bg-accent"
@@ -111,20 +113,24 @@ export default async function StatePage({
       </section>
 
       {/* ── UNDERSTAND: the mechanism. The reason this app exists. ──────── */}
-      <section
-        className="animate-rise stagger mt-12"
-        style={{ '--i': 2 } as React.CSSProperties}
-      >
+      <section className="mt-12">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionUnderstand[lang]}
         </h2>
-        <h3 className="mt-3 font-display text-2xl leading-snug tracking-tight text-fg">
+        <h3
+          data-reveal="unmask"
+          className="mt-3 font-display text-2xl leading-snug tracking-tight text-fg"
+        >
           {mechanism.headline[lang]}
         </h3>
 
         <div className="mt-4 space-y-4">
           {mechanism.body[lang].map((para) => (
-            <p key={para.slice(0, 40)} className="text-[1.0625rem] leading-[1.75] text-fg-soft">
+            <p
+              key={para.slice(0, 40)}
+              data-reveal="fade"
+              className="text-[1.0625rem] leading-[1.75] text-fg-soft"
+            >
               {para}
             </p>
           ))}
@@ -132,8 +138,13 @@ export default async function StatePage({
 
         {/* The named parts, as a plain labelled list rather than fake anatomy. */}
         <ul className="mt-7 grid gap-px overflow-hidden rounded-card border border-edge bg-edge">
-          {mechanism.parts.map((part) => (
-            <li key={part.name[lang]} className="bg-card p-4">
+          {mechanism.parts.map((part, i) => (
+            <li
+              key={part.name[lang]}
+              data-reveal="rise"
+              style={{ '--i': i } as React.CSSProperties}
+              className="bg-card p-4"
+            >
               <p className="text-sm font-semibold text-accent-ink">{part.name[lang]}</p>
               <p className="mt-1 text-sm leading-relaxed text-fg-soft">{part.role[lang]}</p>
             </li>
@@ -142,39 +153,32 @@ export default async function StatePage({
       </section>
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}
-      <section
-        className="animate-rise stagger mt-12"
-        style={{ '--i': 3 } as React.CSSProperties}
-      >
+      <section className="mt-12">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionFix[lang]}
         </h2>
         <div className="mt-4 space-y-4">
-          {state.techniques.map((technique) => (
-            <TechniqueCard key={technique.id} technique={technique} lang={lang} />
+          {state.techniques.map((technique, i) => (
+            <div key={technique.id} data-reveal="rise" style={{ '--i': i } as React.CSSProperties}>
+              <TechniqueCard technique={technique} lang={lang} />
+            </div>
           ))}
         </div>
       </section>
 
       {/* ── The optional AI layer, deliberately below the curated content. ─ */}
-      <section
-        className="animate-rise stagger mt-12"
-        style={{ '--i': 4 } as React.CSSProperties}
-      >
+      <section className="mt-12">
         <Coach lang={lang} stateId={state.id} />
       </section>
 
       {/* ── SOURCES: the line between this and a wellness blog. ─────────── */}
-      <section
-        className="animate-rise stagger mt-12"
-        style={{ '--i': 5 } as React.CSSProperties}
-      >
+      <section className="mt-12">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionSources[lang]}
         </h2>
         <ul className="mt-4 space-y-2">
           {state.sources.map((source) => (
-            <li key={source.url}>
+            <li key={source.url} data-reveal="fade">
               <a
                 href={source.url}
                 target="_blank"

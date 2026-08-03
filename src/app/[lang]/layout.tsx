@@ -7,6 +7,7 @@ import { LANGS, isLang } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { Reveals } from '@/components/Reveals';
 
 /**
  * This is the ROOT layout. There is deliberately no `app/layout.tsx`: every
@@ -68,13 +69,26 @@ export async function generateMetadata({
  */
 const THEME_SCRIPT = `
 (function(){
+  var el = document.documentElement;
   try {
     var stored = localStorage.getItem('cortexPrefs');
     var theme = stored ? JSON.parse(stored).theme : null;
     if (theme !== 'light' && theme !== 'dark') {
       theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    el.classList.toggle('dark', theme === 'dark');
+  } catch (e) {}
+
+  /*
+    Arm the scroll reveals only when JS is running AND motion is welcome.
+    The hidden state lives behind this class, so a blocked script or a
+    reduce-motion visitor sees the whole page immediately instead of a
+    permanently blank one.
+  */
+  try {
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add('reveal-ready');
+    }
   } catch (e) {}
 })();
 `;
@@ -97,6 +111,7 @@ export default async function RootLayout({
         <meta name="theme-color" content="#0d1120" media="(prefers-color-scheme: dark)" />
       </head>
       <body className="font-sans min-h-dvh flex flex-col bg-page text-fg">
+        <Reveals />
         <SiteHeader lang={lang} />
         <main className="flex-1">{children}</main>
         <SiteFooter lang={lang} />

@@ -59,6 +59,11 @@
     /* Default hue; each [data-accent='…'] rule below overrides it. */
     --hue: 240;
 
+    /* Offset + soft blur, warm-neutral rather than pure black. */
+    --shadow-lift:
+      0 10px 28px -10px oklch(0.3 0.03 265 / 0.22),
+      0 2px 8px -3px oklch(0.3 0.03 265 / 0.12);
+
     color-scheme: light;
   }
 
@@ -80,6 +85,11 @@
     --l-accent-ink: 0.82;
     --l-accent-fill: 0.78;
     --chroma: 0.12;
+
+    /* Dark surfaces need a deeper, tighter shadow to read as lift at all. */
+    --shadow-lift:
+      0 12px 32px -10px oklch(0 0 0 / 0.65),
+      0 2px 8px -3px oklch(0 0 0 / 0.45);
 
     color-scheme: dark;
   }
@@ -135,10 +145,18 @@
 }
 
 /*
-  ── Motion ────────────────────────────────────────────────────────────────
+  ── Motion and component classes ──────────────────────────────────────────
+
+  These live in Tailwind's own cascade layers on purpose. Unlayered CSS
+  outranks every layered rule, so pulling them out would silently make
+  `.btn-accent` beat any Tailwind utility applied alongside it — a class like
+  `rounded-none` on a button would stop working with no error. Inside
+  `@layer components`, utilities correctly win, which is what you want.
+
   Calm easing, no overshoot, no spring. This is an app for people who are
   already activated; bouncy physics is the wrong signal.
 */
+
 @layer components {
   /*
     Two buttons is the whole system. Anything that needs a third variant
@@ -167,21 +185,88 @@
     transition: color 160ms ease, border-color 160ms ease;
   }
   .btn-quiet:hover { color: var(--c-fg); border-color: var(--c-fg-mute); }
+
+  /*
+    Card lift. Shadows carry a real offset and a soft blur — a zero-offset
+    halo reads as decoration rather than elevation.
+  */
+  .card-lift {
+    transition:
+      transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 240ms ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  /* Press is a smaller lift, not a drop — the surface stays raised. */
+  .card-lift:active {
+    transform: translateY(-1px);
+    transition-duration: 90ms;
+  }
 }
 
 @layer utilities {
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: none; }
+  /*
+    ── The focal moment: the page breathes ──────────────────────────────────
+
+    11 seconds per cycle — 5.5s expanding, 5.5s contracting. That is not an
+    arbitrary "slow"; it is roughly 5.5 breaths per minute, the coherent-
+    breathing rate this app actually teaches. Someone landing on the page
+    starts entraining to it before they have read a word, which is the whole
+    thesis of the product expressed as motion rather than decoration.
+
+    The easing is a sine-like in-out because breath has no hard stops.
+  */
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.46; }
+    /* Peak capped at 0.7: past that the field lightens the dark background
+       enough to start eating text contrast. */
+    50% { transform: scale(1.16); opacity: 0.7; }
   }
 
-  .animate-rise {
-    animation: rise 380ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  .breath-field {
+    animation: breathe 11s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    will-change: transform, opacity;
   }
 
-  /* Section stagger: --i is set inline per section. */
-  .stagger {
-    animation-delay: calc(var(--i, 0) * 45ms);
+  /*
+    ── Scroll reveals ───────────────────────────────────────────────────────
+
+    Content is visible by default. The hidden state only exists once the
+    inline script has confirmed JS is running AND reduced motion is off, so a
+    failed script or a motion-sensitive visitor gets the full page rather than
+    a blank one.
+
+    Treatment is chosen by what the content IS, not applied uniformly:
+      fade  — prose. Reading should not move.
+      rise  — list items and cards, which arrive as a group.
+      unmask— one authored line per page (the mechanism headline).
+  */
+  /*
+    Hidden and visible states are mutually exclusive via :not(.is-in) rather
+    than a second rule overriding the first. Nothing has to win the cascade:
+    the hidden rule simply stops matching once the class lands, which keeps
+    this correct regardless of how rules are ordered inside the layer.
+  */
+  html.reveal-ready [data-reveal] {
+    transition:
+      opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
+      clip-path 780ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  html.reveal-ready [data-reveal]:not(.is-in) { opacity: 0; }
+
+  html.reveal-ready [data-reveal='rise']:not(.is-in) {
+    transform: translateY(14px);
+  }
+
+  html.reveal-ready [data-reveal='unmask']:not(.is-in) {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(6px);
   }
 }
 
@@ -190,8 +275,9 @@
   Native, GPU-composited, and a no-op in browsers without support.
 */
 ::view-transition-group(*) {
-  animation-duration: 360ms;
-  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-duration: 420ms;
+  /* Exponential ease-out: a confident arrival with no overshoot. */
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /*
