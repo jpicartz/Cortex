@@ -64,19 +64,50 @@ function clientKey(request: Request): string {
   );
 }
 
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+/**
+ * Canonical production origin, e.g. https://cortex.app — set in the Vercel
+ * project. Optional: same-host requests are allowed regardless, so the app
+ * works on its Vercel subdomain before a custom domain exists.
+ */
+const SITE_ORIGIN = process.env.SITE_ORIGIN?.replace(/\/+$/, '');
+
+/** Vercel gives preview deployments generated subdomains. */
+const PREVIEW_HOST = /^cortex[a-z0-9-]*\.vercel\.app$/;
+
 function originAllowed(origin: string | null, host: string | null): boolean {
-  // Non-browser clients send no Origin; the rate limiter covers those.
-  if (!origin) return true;
+  if (!origin) return false;
   try {
-    const { hostname, protocol } = new URL(origin);
-    if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+    const { hostname, protocol, origin: normalised } = new URL(origin);
+    if (!IS_PROD && (hostname === 'localhost' || hostname === '127.0.0.1')) return true;
     if (protocol !== 'https:') return false;
-    // Same-host, plus Vercel preview deployments for this project.
+    if (SITE_ORIGIN && normalised === SITE_ORIGIN) return true;
     if (host && hostname === host.split(':')[0]) return true;
-    return /^cortex[a-z0-9-]*\.vercel\.app$/.test(hostname);
+    return PREVIEW_HOST.test(hostname);
   } catch {
     return false;
   }
+}
+
+/**
+ * Gate the endpoint to real browser requests from this site.
+ *
+ * VitalQuest's proxy allowed a missing Origin through and leaned on the rate
+ * limiter. That is too loose for a public app: the limiter is per-instance
+ * in-memory, so on serverless it is a speed bump rather than a cap. Every
+ * modern browser sends `Sec-Fetch-Site`, and page JavaScript cannot forge it,
+ * so a same-origin fetch passes while a plain `curl` does not.
+ */
+function requestAllowed(request: Request): boolean {
+  const site = request.headers.get('sec-fetch-site');
+  if (site && site !== 'same-origin') return false;
+
+  const origin = request.headers.get('origin');
+  if (origin) return originAllowed(origin, request.headers.get('host'));
+
+  // No Origin at all: accept only when the browser vouched for it.
+  return site === 'same-origin';
 }
 
 function fail(status: number, message: string) {
@@ -84,7 +115,7 @@ function fail(status: number, message: string) {
 }
 
 export async function POST(request: Request) {
-  if (!originAllowed(request.headers.get('origin'), request.headers.get('host'))) {
+  if (!requestAllowed(request)) {
     return fail(403, 'Forbidden origin');
   }
 
