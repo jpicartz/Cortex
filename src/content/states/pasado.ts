@@ -53,6 +53,7 @@ export const pasado: MentalState = {
           es: 'Se enciende cuando no estás enfocado. Produce el rumiar en automático.',
           en: 'Switches on when you are unfocused. Produces the automatic rumination.',
         },
+        region: 'dmn',
       },
       {
         name: { es: 'Hipocampo', en: 'Hippocampus' },
@@ -60,6 +61,7 @@ export const pasado: MentalState = {
           es: 'Guarda y reconstruye recuerdos. Los reescribe cada vez que los usas.',
           en: 'Stores and reconstructs memories. Rewrites them each time you use them.',
         },
+        region: 'hippocampus',
       },
     ],
   },

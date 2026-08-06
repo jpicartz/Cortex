@@ -53,6 +53,7 @@ export const procrastinacion: MentalState = {
           es: 'Vota por el alivio de ahora. Siempre gana si la recompensa está lejos.',
           en: 'Votes for relief right now. Wins by default when the reward is far away.',
         },
+        region: 'limbic',
       },
       {
         name: { es: 'Corteza prefrontal', en: 'Prefrontal cortex' },
@@ -60,6 +61,7 @@ export const procrastinacion: MentalState = {
           es: 'Sostiene la meta a futuro. Se agota rápido si la usas solo como fuerza de voluntad.',
           en: 'Holds the future goal. Runs out fast if you use it as raw willpower.',
         },
+        region: 'prefrontal',
       },
       {
         name: { es: 'Dopamina', en: 'Dopamine' },

@@ -7,6 +7,7 @@ import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { TechniqueCard } from '@/components/TechniqueCard';
 import { Coach } from '@/components/Coach';
+import { BrainDiagram } from '@/components/brain/BrainDiagram';
 
 /** All 20 pages (10 states × 2 languages) are generated at build time. */
 export function generateStaticParams() {
@@ -141,20 +142,13 @@ export default async function StatePage({
           ))}
         </div>
 
-        {/* The named parts, as a plain labelled list rather than fake anatomy. */}
-        <ul className="mt-7 grid gap-px overflow-hidden rounded-card border border-edge bg-edge">
-          {mechanism.parts.map((part, i) => (
-            <li
-              key={part.name[lang]}
-              data-reveal="rise"
-              style={{ '--i': i } as React.CSSProperties}
-              className="bg-card p-4"
-            >
-              <p className="text-sm font-semibold text-accent-ink">{part.name[lang]}</p>
-              <p className="mt-1 text-sm leading-relaxed text-fg-soft">{part.role[lang]}</p>
-            </li>
-          ))}
-        </ul>
+        {/*
+          The diagram owns the parts now: it renders every name and role as
+          real text (all of them at once when motion is off), so there is no
+          separate list to keep in sync or duplicate.
+        */}
+        <BrainDiagram parts={mechanism.parts} lang={lang} />
+
       </section>
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}

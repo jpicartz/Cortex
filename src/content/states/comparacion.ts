@@ -53,6 +53,7 @@ export const comparacion: MentalState = {
           es: 'Calcula valor en relativo, contra una expectativa, nunca en absoluto.',
           en: 'Computes value relatively, against an expectation — never in absolute terms.',
         },
+        region: 'reward-path',
       },
       {
         name: { es: 'Punto de referencia', en: 'Reference point' },

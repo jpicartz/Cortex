@@ -126,6 +126,9 @@
   }
 
   body {
+    /* Lets a full-bleed 100vw section exist without 100vw exceeding the
+       document width once a vertical scrollbar is present. */
+    overflow-x: clip;
     background-color: var(--c-page);
     color: var(--c-fg);
     -webkit-font-smoothing: antialiased;

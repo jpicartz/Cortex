@@ -53,6 +53,7 @@ export const ansiedad: MentalState = {
           es: 'Detector de amenazas. Prende la alarma en menos de un segundo, sin consultar.',
           en: 'Threat detector. Fires the alarm in under a second, without checking in.',
         },
+        region: 'amygdala',
       },
       {
         name: { es: 'Corteza prefrontal', en: 'Prefrontal cortex' },
@@ -60,6 +61,7 @@ export const ansiedad: MentalState = {
           es: 'La parte que razona. Llega tarde a la fiesta y suele quedarse construyendo explicaciones.',
           en: 'The part that reasons. Arrives late and usually ends up building explanations.',
         },
+        region: 'prefrontal',
       },
       {
         name: { es: 'Nervio vago', en: 'Vagus nerve' },
@@ -67,6 +69,7 @@ export const ansiedad: MentalState = {
           es: 'El cable que conecta respiración y ritmo cardiaco. Es tu control de volumen manual.',
           en: 'The wire linking breath to heart rate. This is your manual volume knob.',
         },
+        region: 'vagus',
       },
     ],
   },

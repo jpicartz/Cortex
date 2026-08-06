@@ -53,6 +53,7 @@ export const miedoAlJuicio: MentalState = {
           es: 'Registra el dolor social usando parte del circuito del dolor físico.',
           en: 'Registers social pain using part of the physical-pain circuit.',
         },
+        region: 'acc',
       },
       {
         name: { es: 'Efecto reflector', en: 'Spotlight effect' },

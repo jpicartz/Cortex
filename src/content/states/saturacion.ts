@@ -53,6 +53,7 @@ export const saturacion: MentalState = {
           es: 'Sostiene unos cuatro elementos a la vez. Es el cuello de botella real.',
           en: 'Holds about four items at once. This is the actual bottleneck.',
         },
+        region: 'dlpfc',
       },
       {
         name: { es: 'Bucles abiertos', en: 'Open loops' },

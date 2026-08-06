@@ -60,6 +60,7 @@ export const desmotivacion: MentalState = {
           es: 'Calcula qué tanto vale la pena el esfuerzo antes de que decidas.',
           en: 'Computes whether the effort is worth it, before you decide.',
         },
+        region: 'ventral-striatum',
       },
     ],
   },

@@ -60,6 +60,7 @@ export const insomnio: MentalState = {
           es: 'Fija a qué hora tu cuerpo espera dormir. Lo ajusta la luz, sobre todo la de la mañana.',
           en: 'Sets when your body expects to sleep. Tuned by light, especially morning light.',
         },
+        region: 'scn',
       },
       {
         name: { es: 'Cortisol', en: 'Cortisol' },

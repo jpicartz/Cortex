@@ -44,6 +44,17 @@ export const UI = {
   sectionSources: { es: 'De dónde sale esto', en: 'Where this comes from' },
   backToMenu: { es: 'Todas las emociones', en: 'All feelings' },
 
+  // ── Brain diagram ───────────────────────────────────────────────────────
+  diagramLabel: { es: 'Quién participa', en: 'Who is involved' },
+  diagramPlay: { es: 'Ver una por una', en: 'Step through' },
+  diagramReplay: { es: 'Repetir', en: 'Replay' },
+  /** Marks the parts that are processes, not places. */
+  diagramConcept: { es: '· proceso', en: '· process' },
+  diagramCaption: {
+    es: 'Esquema, no una ilustración médica. Las estructuras aparecen donde están; los procesos no tienen lugar y por eso solo se nombran.',
+    en: 'A schematic, not a medical illustration. Structures appear where they are; processes have no location, so they are only named.',
+  },
+
   // ── Techniques ──────────────────────────────────────────────────────────
   whyItWorks: { es: 'Por qué funciona', en: 'Why it works' },
   theSteps: { es: 'Los pasos', en: 'The steps' },

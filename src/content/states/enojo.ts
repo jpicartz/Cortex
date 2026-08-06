@@ -53,6 +53,7 @@ export const enojo: MentalState = {
           es: 'Dispara la reacción. Se calma sola si dejas de recargarla con pensamiento.',
           en: 'Fires the reaction. Settles on its own if you stop reloading it with thought.',
         },
+        region: 'amygdala',
       },
       {
         name: { es: 'Corteza prefrontal ventrolateral', en: 'Ventrolateral prefrontal cortex' },
@@ -60,6 +61,7 @@ export const enojo: MentalState = {
           es: 'Se activa al ponerle palabras a lo que sientes, y eso baja a la amígdala.',
           en: 'Comes online when you put words to what you feel, and that quiets the amygdala.',
         },
+        region: 'vlpfc',
       },
     ],
   },

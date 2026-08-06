@@ -88,6 +88,29 @@ export const ICONS = [
 ] as const;
 export type IconKey = (typeof ICONS)[number];
 
+/**
+ * Brain regions the diagram can point at. Keys map to geometry in
+ * `components/brain/regions.ts`; a part without one is a concept, not a place.
+ *
+ * An enum rather than a free string, so a typo fails `next build` alongside
+ * every other content mistake instead of silently drawing nothing.
+ */
+export const REGIONS = [
+  'amygdala',
+  'prefrontal',
+  'vlpfc',
+  'dlpfc',
+  'acc',
+  'hippocampus',
+  'ventral-striatum',
+  'limbic',
+  'dmn',
+  'reward-path',
+  'scn',
+  'vagus',
+] as const;
+export type Region = (typeof REGIONS)[number];
+
 /** Accent tokens; each has a light and dark value in globals.css. */
 export const ACCENTS = [
   'sky',
@@ -139,7 +162,26 @@ export const mentalStateSchema = z.object({
     headline: bi,
     body: biList,
     /** Labelled parts for the diagram. Two or three, never more. */
-    parts: z.array(z.object({ name: bi, role: bi })).min(1).max(3),
+    parts: z
+      .array(
+        z.object({
+          name: bi,
+          role: bi,
+          /**
+           * Where this part actually is, when it is a place at all.
+           *
+           * Roughly half the parts across the ten states are processes,
+           * chemicals or cognitive biases — "memoria de trabajo", "bucles
+           * abiertos", "efecto reflector". Those carry no region and render
+           * as concept nodes beside the diagram. Giving them a position on a
+           * brain would be inventing anatomy, which is exactly what would
+           * undercut the citations this app rests on.
+           */
+          region: z.enum(REGIONS).optional(),
+        }),
+      )
+      .min(1)
+      .max(3),
   }),
 
   /** FIX */
