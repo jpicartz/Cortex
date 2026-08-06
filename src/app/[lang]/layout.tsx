@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import '../globals.css';
 import { LANGS, isLang } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { siteUrl } from '@/lib/siteUrl';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveals } from '@/components/Reveals';
@@ -50,8 +51,11 @@ export async function generateMetadata({
     },
     description: UI.tagline[lang],
     applicationName: UI.siteName[lang],
+    // Without metadataBase, canonical and OG URLs stay relative and Next warns
+    // at build. Crawlers and link unfurlers both need absolute URLs.
+    metadataBase: new URL(siteUrl()),
     alternates: {
-      languages: { es: '/es', en: '/en' },
+      languages: { es: '/es', en: '/en', 'x-default': '/es' },
     },
     openGraph: {
       type: 'website',

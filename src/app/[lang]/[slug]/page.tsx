@@ -32,7 +32,12 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: `/${lang}/${state.slug[lang]}`,
-      languages: { es: `/es/${state.slug.es}`, en: `/en/${state.slug.en}` },
+      languages: {
+        es: `/es/${state.slug.es}`,
+        en: `/en/${state.slug.en}`,
+        // Spanish is the primary voice, so it is what an unmatched locale gets.
+        'x-default': `/es/${state.slug.es}`,
+      },
     },
     openGraph: { title, description, type: 'article' },
     twitter: { card: 'summary_large_image', title, description },

@@ -22,7 +22,10 @@ export async function generateMetadata({
   return {
     title: `${UI.siteName[lang]} — ${UI.tagline[lang]}`,
     description: UI.menuHelp[lang],
-    alternates: { canonical: `/${lang}`, languages: { es: '/es', en: '/en' } },
+    alternates: {
+      canonical: `/${lang}`,
+      languages: { es: '/es', en: '/en', 'x-default': '/es' },
+    },
   };
 }
 
