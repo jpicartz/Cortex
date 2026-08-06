@@ -34,16 +34,20 @@ export const procrastinacion: MentalState = {
     },
     body: {
       es: [
-        'Procrastinar no es un problema de administrar el tiempo. Es un problema de administrar emociones. La tarea que estás evitando te produce algo incómodo —aburrimiento, ansiedad, miedo a hacerlo mal, no saber por dónde empezar— y posponerla te quita esa incomodidad de inmediato.',
-        'Ese alivio instantáneo es el problema. Tu cerebro registra que evitar funcionó, y refuerza la conducta. No estás siendo flojo: estás siendo eficientísimo para quitarte una molestia. Lo repites porque te funciona, a corto plazo.',
-        'Además, el momento más caro de cualquier tarea es el arranque. Antes de empezar solo existe el costo; la recompensa todavía no aparece por ningún lado. Una vez que llevas unos minutos dentro, el avance mismo empieza a generar dopamina y la tarea se sostiene sola. Casi nunca es la tarea lo que cuesta: es cruzar el umbral de entrada.',
-        'Por eso la trampa clásica falla. Cuando no tienes ganas, buscas algo fácil y placentero —el teléfono, el video, el snack— para "agarrar impulso". Eso hace lo contrario: sube el placer inmediato y deja tu punto de partida todavía más abajo para lo que sigue. Lo que sí levanta ese punto de partida es el esfuerzo, no la recompensa.',
+        'Procrastinar no es un problema de tiempo. Es un problema de emociones.',
+        'La tarea te produce algo incómodo: aburrimiento, ansiedad, miedo a hacerlo mal, no saber por dónde empezar. Posponerla te quita esa incomodidad al instante.',
+        'Y ahí está la trampa. Tu cerebro registra que evitar funcionó. No estás siendo flojo: estás siendo eficientísimo para quitarte una molestia.',
+        'Piénsalo como dos votantes con un solo voto entre los dos. Uno quiere que te sientas bien ahora mismo. El otro sostiene la meta de mañana. Cuando la recompensa está lejos, el primero gana casi siempre.',
+        'Por eso el momento más caro de cualquier tarea es el arranque. Antes de empezar solo existe el costo. Pasados unos minutos, el avance mismo genera dopamina y la tarea empieza a sostenerse sola.',
+        'Casi nunca es la tarea lo que cuesta. Es cruzar la puerta.',
       ],
       en: [
-        "Procrastination isn't a time-management problem. It's an emotion-management problem. The task you're avoiding produces something uncomfortable — boredom, anxiety, fear of doing it badly, not knowing where to begin — and putting it off removes that discomfort immediately.",
-        "That instant relief is the whole problem. Your brain registers that avoidance worked and reinforces it. You aren't being lazy — you're being extremely efficient at removing a discomfort. You repeat it because it works, in the short term.",
-        'On top of that, the most expensive moment of any task is starting it. Before you begin there is only cost; the reward is nowhere in sight yet. A few minutes in, progress itself starts producing dopamine and the task begins to carry itself. It is almost never the task that is hard — it is crossing the threshold into it.',
-        'Which is why the classic move backfires. When you have no drive, you reach for something easy and pleasurable — the phone, the video, the snack — to "build momentum." That does the opposite: it spikes immediate pleasure and leaves your baseline even lower for whatever comes next. What actually raises that baseline is effort, not reward.',
+        "Procrastination isn't a time problem. It's an emotion problem.",
+        'The task produces something uncomfortable: boredom, anxiety, fear of doing it badly, not knowing where to start. Putting it off removes that discomfort instantly.',
+        "And there's the trap. Your brain registers that avoidance worked. You aren't lazy — you're extremely efficient at removing a discomfort.",
+        'Think of it as two voters sharing a single vote. One wants you to feel good right now. The other is holding tomorrow\'s goal. When the reward is far away, the first one wins almost every time.',
+        'Which is why the most expensive moment of any task is starting it. Before you begin there is only cost. A few minutes in, progress itself produces dopamine and the task starts to carry itself.',
+        "It is almost never the task that's hard. It's walking through the door.",
       ],
     },
     parts: [

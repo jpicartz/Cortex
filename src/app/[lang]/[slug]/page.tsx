@@ -130,6 +130,17 @@ export default async function StatePage({
           {mechanism.headline[lang]}
         </h3>
 
+        {/*
+          Diagram before the prose: it names the players, then the text
+          explains what they do. The other order made the most striking thing
+          on the page arrive after the point had already been made.
+
+          It owns the parts now: it renders every name and role as
+          real text (all of them at once when motion is off), so there is no
+          separate list to keep in sync or duplicate.
+        */}
+        <BrainDiagram parts={mechanism.parts} lang={lang} />
+
         <div className="mt-4 space-y-4">
           {mechanism.body[lang].map((para) => (
             <p
@@ -141,13 +152,6 @@ export default async function StatePage({
             </p>
           ))}
         </div>
-
-        {/*
-          The diagram owns the parts now: it renders every name and role as
-          real text (all of them at once when motion is off), so there is no
-          separate list to keep in sync or duplicate.
-        */}
-        <BrainDiagram parts={mechanism.parts} lang={lang} />
 
       </section>
 
