@@ -127,6 +127,34 @@ export const procrastinacion: MentalState = {
       },
     },
     {
+      id: 'formula-de-motivacion',
+      name: { es: 'La fórmula de la motivación', en: 'The motivation equation' },
+      why: {
+        es: 'La motivación no es un rasgo que tengas o no tengas. Es el resultado de cuatro variables, y las cuatro se pueden mover a mano.',
+        en: 'Motivation is not a trait you either have or lack. It is the output of four variables, and all four can be moved by hand.',
+      },
+      durationHint: { es: '10 minutos', en: '10 minutes' },
+      tool: { kind: 'checklist' },
+      steps: {
+        es: [
+          'La fórmula es: Motivación = (Expectativa × Valor) ÷ (1 + Impulsividad × Demora). Son cuatro perillas, no una.',
+          'Escribe la tarea que estás evitando. Vas a mover variables, no tu fuerza de voluntad.',
+          'Expectativa: ¿de verdad crees que puedes? Si no, parte la tarea hasta que el primer paso sea obviamente posible.',
+          'Valor: ¿te importa o te aburre? Súbele valor emparejándola con algo que sí disfrutes hacer al mismo tiempo.',
+          'Impulsividad: quita de la mesa lo que va a jalarte. El teléfono en otro cuarto, no boca abajo junto a ti.',
+          'Demora: acerca la recompensa. Ponte tu propia fecha límite para hoy, mucho antes de la real.',
+        ],
+        en: [
+          'The equation is: Motivation = (Expectancy × Value) ÷ (1 + Impulsiveness × Delay). Four dials, not one.',
+          'Write down the task you are avoiding. You are going to move variables, not willpower.',
+          'Expectancy: do you actually believe you can? If not, split the task until the first step is obviously doable.',
+          'Value: does it matter to you, or does it bore you? Raise the value by pairing it with something you enjoy doing at the same time.',
+          'Impulsiveness: take off the table whatever will pull you away. Phone in another room, not face-down beside you.',
+          'Delay: bring the reward closer. Set your own deadline for today, well before the real one.',
+        ],
+      },
+    },
+    {
       id: 'emparejar-tentaciones',
       name: { es: 'Emparejar tentaciones', en: 'Temptation bundling' },
       why: {
@@ -162,6 +190,11 @@ export const procrastinacion: MentalState = {
     {
       label: 'Milkman, Minson & Volpp (2014), Management Science — Temptation bundling',
       url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2013.1784',
+    },
+    {
+      label:
+        'Steel & König (2006), Academy of Management Review 31(4): 889–913 — Integrating Theories of Motivation (Temporal Motivation Theory)',
+      url: 'https://doi.org/10.5465/amr.2006.22527462',
     },
   ],
 
