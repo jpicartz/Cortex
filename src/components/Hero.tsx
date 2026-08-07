@@ -1,5 +1,6 @@
 import type { Lang } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { ParallaxLayer } from '@/components/ParallaxLayer';
 
 /**
  * The hero, and the one authored moment on the site.
@@ -16,24 +17,36 @@ import { UI } from '@/lib/ui';
 export function Hero({ lang }: { lang: Lang }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-edge/60">
-      {/* The breathing field. aria-hidden: it is atmosphere, not content. */}
+      {/*
+        The breathing field. aria-hidden: it is atmosphere, not content.
+
+        Each blob is wrapped in its own parallax layer rather than being
+        transformed directly — `breath-field` already animates `transform`, and
+        a scroll-driven transform on the same node would overwrite the breath.
+        The two layers drift at different distances, so the field gains depth on
+        scroll without either blob losing its own rhythm.
+      */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div
-          className="breath-field absolute left-1/2 top-1/2 size-[46rem] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-          style={{
-            background:
-              'radial-gradient(circle, oklch(0.72 0.11 240 / 0.55), transparent 68%)',
-          }}
-        />
-        <div
-          className="breath-field absolute left-[38%] top-[58%] size-[30rem] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-          style={{
-            background:
-              'radial-gradient(circle, oklch(0.74 0.10 155 / 0.42), transparent 70%)',
-            animationDelay: '-3.7s',
-            animationDuration: '13s',
-          }}
-        />
+        <ParallaxLayer distance={-90} className="absolute inset-0">
+          <div
+            className="breath-field absolute left-1/2 top-1/2 size-[46rem] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+            style={{
+              background:
+                'radial-gradient(circle, oklch(0.72 0.11 240 / 0.55), transparent 68%)',
+            }}
+          />
+        </ParallaxLayer>
+        <ParallaxLayer distance={-40} className="absolute inset-0">
+          <div
+            className="breath-field absolute left-[38%] top-[58%] size-[30rem] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+            style={{
+              background:
+                'radial-gradient(circle, oklch(0.74 0.10 155 / 0.42), transparent 70%)',
+              animationDelay: '-3.7s',
+              animationDuration: '13s',
+            }}
+          />
+        </ParallaxLayer>
       </div>
 
       {/*

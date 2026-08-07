@@ -248,19 +248,18 @@
       unmask— one authored line per page (the mechanism headline).
   */
   /*
+    These rules only supply the RESTING hidden state, before JS has measured
+    anything. There is deliberately no `transition` here any more: Reveals.tsx
+    drives opacity and transform from scroll position every frame, so a
+    transition would fight the scrubbing and reintroduce exactly the lagging,
+    plays-itself-out feel this replaced. Duration comes from how fast you
+    scroll, which is the whole idea.
+
     Hidden and visible states are mutually exclusive via :not(.is-in) rather
     than a second rule overriding the first. Nothing has to win the cascade:
     the hidden rule simply stops matching once the class lands, which keeps
     this correct regardless of how rules are ordered inside the layer.
   */
-  html.reveal-ready [data-reveal] {
-    transition:
-      opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
-      clip-path 780ms cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: calc(var(--i, 0) * 70ms);
-  }
-
   html.reveal-ready [data-reveal]:not(.is-in) { opacity: 0; }
 
   html.reveal-ready [data-reveal='rise']:not(.is-in) {

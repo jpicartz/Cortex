@@ -6,6 +6,7 @@ import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { TransitionLink } from '@/components/TransitionLink';
 import { Hero } from '@/components/Hero';
+import { CajalField } from '@/components/brain/CajalField';
 
 export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
@@ -37,7 +38,11 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
     <>
       <Hero lang={lang} />
 
-      <div className="mx-auto max-w-3xl px-5 py-14 sm:py-20">
+      <div className="relative mx-auto max-w-3xl px-5 py-14 sm:py-20">
+        {/* Mirrored to the opposite margin from the detail pages, so moving
+            between the two does not feel like the same sticker twice. */}
+        <CajalField side="left" />
+
         <header className="mb-8 sm:mb-10">
           {/* h2, not h1 — the hero line owns the page's only h1. */}
           <h2
@@ -46,28 +51,24 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
           >
             {UI.menuHeading[lang]}
           </h2>
-          <p
-            data-reveal="fade"
-            style={{ '--i': 1 } as React.CSSProperties}
-            className="mt-3 max-w-prose text-base leading-relaxed text-fg-soft"
-          >
+          <p data-reveal="fade" className="mt-3 max-w-prose text-base leading-relaxed text-fg-soft">
             {UI.menuHelp[lang]}
           </p>
         </header>
 
+        {/*
+          No fixed stagger any more. Each card reveals on its own distance from
+          the fold, so a row arrives together — they genuinely are at the same
+          height — and rows cascade as you scroll. The old delay ran on its own
+          clock, which made the last card feel late however fast you moved.
+        */}
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {STATES.map((state, i) => (
+          {STATES.map((state) => (
             <li key={state.id} data-accent={state.accent}>
               <TransitionLink
                 href={`/${lang}/${state.slug[lang]}`}
                 data-reveal="rise"
                 className="card-lift group flex h-full items-start gap-4 rounded-card border border-edge bg-card p-4 hover:border-accent/60"
-                /*
-                  Stagger caps out deliberately: ten items at full delay would
-                  make the last card arrive nearly a second late, which reads
-                  as slowness rather than choreography.
-                */
-                style={{ '--i': Math.min(i, 5) } as React.CSSProperties}
               >
                 <span
                   className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20"

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Lang, MentalState } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { useScrollProgress } from '@/hooks/useScrollProgress';
+import { clamp01, smoothstep } from '@/lib/scrollDriver';
 import { OUTLINE, REGION_GEOMETRY, VIEWBOX, type Shape } from './regions';
 
 type Part = MentalState['mechanism']['parts'][number];
@@ -34,9 +36,12 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
    * tall, sticky, scroll-scrubbed panel.
    */
   const [scrollMode, setScrollMode] = useState(false);
-  const [active, setActive] = useState(0);
 
   const outerRef = useRef<HTMLElement>(null);
+  const regionRefs = useRef<(SVGGElement | null)[]>([]);
+  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const pipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const nearestRef = useRef(-1);
 
   /**
    * Some states are driven entirely by processes with no location — worry is
@@ -51,57 +56,67 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
   }, [hasAnatomy]);
 
   /**
-   * The sequence is driven by scroll position, not a timer: the reader sets
-   * the pace, nothing advances out from under them, and scrubbing back works.
-   * rAF-throttled so a fast scroll cannot queue more work than it can paint.
+   * The whole point of the rework: scroll position stays a float.
+   *
+   * The previous version floored it to an integer, so ~78vh of scrolling
+   * produced no change at all and then a 650ms transition fired on its own
+   * clock — motion decoupled from the input, which is what made it feel bulky.
+   * Here every part's weight is a continuous falloff from the current position,
+   * so all of them are always partially lit and the scroll IS the timing.
+   *
+   * Nothing below sets React state. At 60fps that would be a re-render per
+   * frame; instead this writes compositor-only properties straight to the DOM.
    */
-  useEffect(() => {
-    if (!scrollMode) return;
-    const node = outerRef.current;
-    if (!node) return;
-
-    let frame = 0;
-    const measure = () => {
-      frame = 0;
-      const rect = node.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
-      if (travel <= 0) return;
-
-      const progress = Math.min(Math.max(-rect.top / travel, 0), 0.9999);
-      setActive(Math.floor(progress * parts.length));
-    };
-
-    const onScroll = () => {
+  const onProgress = useCallback(
+    (p: number) => {
       /*
-        rAF is paused while the document is hidden, so a queued frame would
-        never run and every later scroll would be dropped by the `frame` guard.
-        Nothing is painting anyway, so just measure inline and stay correct.
+        Maps progress onto part CENTRES, not part slots. The naive `p * length`
+        puts position 0 half a slot before the first centre and position
+        `length` half a slot past the last, so the first part arrived already
+        half faded and the last faded back out while the panel was still
+        pinned. Running 0.5 → length-0.5 lands the first part fully lit the
+        moment the section sticks and holds the last one until it releases.
       */
-      if (document.hidden) {
-        measure();
-        return;
+      const position = 0.5 + p * (parts.length - 1);
+
+      for (let i = 0; i < parts.length; i++) {
+        // Linear falloff hits 0.5 exactly at the midpoint between two parts,
+        // so the pair cross-fades rather than one leaving before the next.
+        const distance = Math.abs(position - (i + 0.5));
+        const weight = smoothstep(clamp01(1 - distance));
+
+        const region = regionRefs.current[i];
+        if (region) region.style.opacity = (0.1 + 0.9 * weight).toFixed(3);
+
+        const label = labelRefs.current[i];
+        if (label) {
+          const drift = position - (i + 0.5);
+          label.style.opacity = (weight * weight).toFixed(3);
+          label.style.transform = `translateY(${(drift * -16).toFixed(2)}px)`;
+          // Blur only on the way out — a sharp label never gets softened.
+          label.style.filter = weight > 0.85 ? 'none' : `blur(${((1 - weight) * 2.4).toFixed(2)}px)`;
+        }
+
+        const pip = pipRefs.current[i];
+        if (pip) {
+          pip.style.width = `${(20 + 20 * weight).toFixed(1)}px`;
+          pip.style.opacity = (0.3 + 0.7 * weight).toFixed(3);
+        }
       }
-      if (frame) return;
-      frame = requestAnimationFrame(measure);
-    };
 
-    measure();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    /*
-      A hidden document pauses requestAnimationFrame, so any scrolling that
-      happened while the tab was in the background never got measured. Re-read
-      position on the way back rather than waiting for the next scroll.
-    */
-    document.addEventListener('visibilitychange', onScroll);
+      // Semantics, unlike pixels, are discrete — so only touch them on change.
+      const nearest = Math.min(parts.length - 1, Math.max(0, Math.floor(position)));
+      if (nearest !== nearestRef.current) {
+        nearestRef.current = nearest;
+        for (let i = 0; i < parts.length; i++) {
+          pipRefs.current[i]?.setAttribute('aria-current', String(i === nearest));
+        }
+      }
+    },
+    [parts.length],
+  );
 
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      document.removeEventListener('visibilitychange', onScroll);
-    };
-  }, [scrollMode, parts.length]);
+  useScrollProgress(outerRef, onProgress, { mode: 'travel', enabled: scrollMode });
 
   /** Clicking a step scrolls to its segment rather than jumping state. */
   const goTo = useCallback(
@@ -109,15 +124,13 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
       const node = outerRef.current;
       if (!node) return;
       const travel = node.offsetHeight - window.innerHeight;
-      const target =
-        node.offsetTop + (travel * (index + 0.5)) / parts.length - window.innerHeight * 0;
-      window.scrollTo({ top: target, behavior: 'smooth' });
+      window.scrollTo({
+        top: node.offsetTop + (travel * (index + 0.5)) / parts.length,
+        behavior: 'smooth',
+      });
     },
     [parts.length],
   );
-
-  const lit = (index: number) => !scrollMode || active === index;
-  const current = parts[Math.min(active, parts.length - 1)];
 
   const brain = (
     <svg
@@ -157,13 +170,22 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
         part.region ? (
           <g
             key={part.name[lang]}
+            ref={(el) => {
+              regionRefs.current[index] = el;
+            }}
             className="text-accent"
             fill="currentColor"
             stroke="currentColor"
-            filter={lit(index) ? 'url(#brain-glow)' : undefined}
+            /*
+              The glow is applied unconditionally rather than toggled. Adding
+              and removing a filter mid-scroll forces a repaint of the layer at
+              exactly the moment the eye is on it; leaving it on is a constant,
+              cheaper cost and lets opacity alone carry the reveal.
+            */
+            filter="url(#brain-glow)"
             style={{
-              opacity: lit(index) ? 1 : 0.1,
-              transition: 'opacity 650ms cubic-bezier(0.16, 1, 0.3, 1)',
+              opacity: scrollMode ? (index === 0 ? 1 : 0.1) : 1,
+              willChange: scrollMode ? 'opacity' : undefined,
             }}
           >
             {REGION_GEOMETRY[part.region].shapes.map((shape, i) => (
@@ -208,7 +230,7 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
   // ── Nothing to draw: processes only, so no brain. ────────────────────────
   if (!hasAnatomy) {
     return (
-      <section className="my-12 w-screen border-y border-edge/70 bg-raised/60 [margin-inline:calc(50%-50vw)]">
+      <section className="my-12 w-screen border-y border-edge/70 bg-raised [margin-inline:calc(50%-50vw)]">
         <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
           {eyebrow}
           {partList}
@@ -221,7 +243,7 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
   // ── Static: server render, no JS, or reduced motion ──────────────────────
   if (!scrollMode) {
     return (
-      <section className="my-12 w-screen border-y border-edge/70 bg-raised/60 [margin-inline:calc(50%-50vw)]">
+      <section className="my-12 w-screen border-y border-edge/70 bg-raised [margin-inline:calc(50%-50vw)]">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-14 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           {brain}
           <div>
@@ -239,7 +261,7 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
     <section
       ref={outerRef}
       style={{ height: `${parts.length * VH_PER_PART + 100}vh` }}
-      className="relative my-12 w-screen border-y border-edge/70 bg-raised/60 [margin-inline:calc(50%-50vw)]"
+      className="relative my-12 w-screen border-y border-edge/70 bg-raised [margin-inline:calc(50%-50vw)]"
     >
       <div className="sticky top-0 flex h-dvh items-center overflow-hidden">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-8 px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
@@ -249,34 +271,52 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
             {eyebrow}
 
             {/*
-              `key` on the part restarts the entrance, so each one arrives
-              rather than cross-dissolving into a blur of two names at once.
+              Every label is rendered at once and stacked, rather than swapping
+              one out for another. That is what lets two of them be partly
+              present at the same time and hand over mid-drift — a single
+              swapped node can only ever cut.
             */}
-            <div key={active} className="animate-rise mt-6 min-h-[11rem]">
-              <p className="font-display text-[clamp(2rem,4.6vw,3.2rem)] leading-[1.08] tracking-tight text-fg">
-                {current.name[lang]}
-              </p>
-              {!current.region && (
-                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-fg-mute">
-                  {UI.diagramConcept[lang]}
-                </p>
-              )}
-              <p className="mt-3 max-w-prose text-[1.0625rem] leading-[1.75] text-fg-soft">
-                {current.role[lang]}
-              </p>
+            <div className="relative mt-6 min-h-[12rem]">
+              {parts.map((part, index) => (
+                <div
+                  key={part.name[lang]}
+                  ref={(el) => {
+                    labelRefs.current[index] = el;
+                  }}
+                  className="absolute inset-x-0 top-0"
+                  style={{
+                    opacity: index === 0 ? 1 : 0,
+                    willChange: 'opacity, transform, filter',
+                  }}
+                >
+                  <p className="font-display text-[clamp(2rem,4.6vw,3.2rem)] leading-[1.08] tracking-tight text-fg">
+                    {part.name[lang]}
+                  </p>
+                  {!part.region && (
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-fg-mute">
+                      {UI.diagramConcept[lang]}
+                    </p>
+                  )}
+                  <p className="mt-3 max-w-prose text-[1.0625rem] leading-[1.75] text-fg-soft">
+                    {part.role[lang]}
+                  </p>
+                </div>
+              ))}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-2">
               {parts.map((part, index) => (
                 <button
                   key={part.name[lang]}
+                  ref={(el) => {
+                    pipRefs.current[index] = el;
+                  }}
                   type="button"
                   onClick={() => goTo(index)}
                   aria-label={part.name[lang]}
-                  aria-current={active === index}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    active === index ? 'w-10 bg-accent' : 'w-5 bg-edge hover:bg-fg-mute'
-                  }`}
+                  aria-current={index === 0}
+                  className="h-1.5 rounded-full bg-accent"
+                  style={{ width: index === 0 ? 40 : 20, opacity: index === 0 ? 1 : 0.3 }}
                 />
               ))}
             </div>

@@ -8,6 +8,7 @@ import { StateIcon } from '@/components/StateIcon';
 import { TechniqueCard } from '@/components/TechniqueCard';
 import { Coach } from '@/components/Coach';
 import { BrainDiagram } from '@/components/brain/BrainDiagram';
+import { CajalField } from '@/components/brain/CajalField';
 
 /** All 20 pages (10 states × 2 languages) are generated at build time. */
 export function generateStaticParams() {
@@ -59,7 +60,16 @@ export default async function StatePage({
   const { mechanism } = state;
 
   return (
-    <article data-accent={state.accent} className="mx-auto max-w-3xl px-5 py-8 sm:py-10">
+    <article
+      data-accent={state.accent}
+      className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10"
+    >
+      {/*
+        Sits in the margin, outside the prose column, and only above xl — see
+        CajalField for why hairlines behind body text are not worth the risk.
+      */}
+      <CajalField side="right" />
+
       <Link
         href={`/${lang}`}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-fg-mute transition-colors hover:text-fg"
@@ -101,11 +111,10 @@ export default async function StatePage({
           {UI.sectionFeel[lang]}
         </h2>
         <ul className="mt-4 space-y-2.5">
-          {state.feel[lang].map((line, i) => (
+          {state.feel[lang].map((line) => (
             <li
               key={line}
               data-reveal="rise"
-              style={{ '--i': i } as React.CSSProperties}
               className="flex gap-3 text-[1.0625rem] leading-relaxed text-fg-soft"
             >
               <span
@@ -161,8 +170,8 @@ export default async function StatePage({
           {UI.sectionFix[lang]}
         </h2>
         <div className="mt-4 space-y-4">
-          {state.techniques.map((technique, i) => (
-            <div key={technique.id} data-reveal="rise" style={{ '--i': i } as React.CSSProperties}>
+          {state.techniques.map((technique) => (
+            <div key={technique.id} data-reveal="rise">
               <TechniqueCard technique={technique} lang={lang} />
             </div>
           ))}
