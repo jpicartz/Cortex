@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "createdAt": "2026-08-07T20:13:49.810Z",
+        "reason": "User explicitly chose spring physics for hover and press only; scroll, reveals and the diagram stay on calm ease-out"
+      }
+    ]
+  }
+}
