@@ -38,9 +38,17 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
 
   const outerRef = useRef<HTMLElement>(null);
 
+  /**
+   * Some states are driven entirely by processes with no location — worry is
+   * the clear case. Scrubbing a brain where nothing ever lights up reads as a
+   * broken diagram, so those states get the names as text and no drawing.
+   */
+  const hasAnatomy = parts.some((part) => part.region);
+
   useEffect(() => {
+    if (!hasAnatomy) return;
     if (document.documentElement.classList.contains('reveal-ready')) setScrollMode(true);
-  }, []);
+  }, [hasAnatomy]);
 
   /**
    * The sequence is driven by scroll position, not a timer: the reader sets
@@ -175,9 +183,40 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
 
   const caption = (
     <p className="mt-8 max-w-prose text-xs leading-relaxed text-fg-mute">
-      {UI.diagramCaption[lang]}
+      {hasAnatomy ? UI.diagramCaption[lang] : UI.diagramNoAnatomy[lang]}
     </p>
   );
+
+  const partList = (
+    <ul className="mt-6 space-y-6">
+      {parts.map((part) => (
+        <li key={part.name[lang]}>
+          <p className="font-display text-2xl leading-tight tracking-tight text-fg">
+            {part.name[lang]}
+            {!part.region && (
+              <span className="ml-2 align-middle text-xs font-normal uppercase tracking-wider text-fg-mute">
+                {UI.diagramConcept[lang]}
+              </span>
+            )}
+          </p>
+          <p className="mt-1.5 text-[1.0625rem] leading-relaxed text-fg-soft">{part.role[lang]}</p>
+        </li>
+      ))}
+    </ul>
+  );
+
+  // ── Nothing to draw: processes only, so no brain. ────────────────────────
+  if (!hasAnatomy) {
+    return (
+      <section className="my-12 w-screen border-y border-edge/70 bg-raised/60 [margin-inline:calc(50%-50vw)]">
+        <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
+          {eyebrow}
+          {partList}
+          {caption}
+        </div>
+      </section>
+    );
+  }
 
   // ── Static: server render, no JS, or reduced motion ──────────────────────
   if (!scrollMode) {
@@ -187,23 +226,7 @@ export function BrainDiagram({ parts, lang }: { parts: Part[]; lang: Lang }) {
           {brain}
           <div>
             {eyebrow}
-            <ul className="mt-6 space-y-6">
-              {parts.map((part) => (
-                <li key={part.name[lang]}>
-                  <p className="font-display text-2xl leading-tight tracking-tight text-fg">
-                    {part.name[lang]}
-                    {!part.region && (
-                      <span className="ml-2 align-middle text-xs font-normal uppercase tracking-wider text-fg-mute">
-                        {UI.diagramConcept[lang]}
-                      </span>
-                    )}
-                  </p>
-                  <p className="mt-1.5 text-[1.0625rem] leading-relaxed text-fg-soft">
-                    {part.role[lang]}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            {partList}
             {caption}
           </div>
         </div>

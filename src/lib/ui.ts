@@ -54,6 +54,14 @@ export const UI = {
     es: 'Esquema, no una ilustración médica. Las estructuras aparecen donde están; los procesos no tienen lugar y por eso solo se nombran.',
     en: 'A schematic, not a medical illustration. Structures appear where they are; processes have no location, so they are only named.',
   },
+  /**
+   * Shown instead of the diagram when nothing here is a place. Drawing a brain
+   * with no region lit would imply we had somewhere to point and chose not to.
+   */
+  diagramNoAnatomy: {
+    es: 'Aquí no hay una zona que señalar: lo que participa son procesos, no lugares del cerebro.',
+    en: 'There is no region to point at here — what is involved are processes, not places in the brain.',
+  },
 
   // ── Techniques ──────────────────────────────────────────────────────────
   whyItWorks: { es: 'Por qué funciona', en: 'Why it works' },
