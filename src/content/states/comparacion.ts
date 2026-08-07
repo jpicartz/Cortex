@@ -5,6 +5,8 @@ export const comparacion: MentalState = {
   slug: { es: 'comparacion', en: 'comparison' },
   icon: 'scale',
   accent: 'fuchsia',
+  signature: 'compare',
+  tile: 'standard',
 
   label: { es: 'Comparación', en: 'Comparison' },
   blurb: {

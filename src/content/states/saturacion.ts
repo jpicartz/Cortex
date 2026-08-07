@@ -5,6 +5,8 @@ export const saturacion: MentalState = {
   slug: { es: 'saturacion', en: 'overwhelm' },
   icon: 'stack',
   accent: 'teal',
+  signature: 'layered',
+  tile: 'feature',
 
   label: { es: 'Saturación', en: 'Overwhelm' },
   blurb: {

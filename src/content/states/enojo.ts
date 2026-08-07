@@ -5,6 +5,8 @@ export const enojo: MentalState = {
   slug: { es: 'enojo', en: 'anger' },
   icon: 'flame',
   accent: 'rose',
+  signature: 'spike',
+  tile: 'feature',
 
   label: { es: 'Enojo', en: 'Anger' },
   blurb: {

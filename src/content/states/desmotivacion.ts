@@ -5,6 +5,8 @@ export const desmotivacion: MentalState = {
   slug: { es: 'sin-motivacion', en: 'no-motivation' },
   icon: 'battery',
   accent: 'orange',
+  signature: 'flat',
+  tile: 'standard',
 
   label: { es: 'Sin motivación', en: 'No motivation' },
   blurb: {

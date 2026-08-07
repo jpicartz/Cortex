@@ -9,6 +9,7 @@ import { siteUrl } from '@/lib/siteUrl';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveals } from '@/components/Reveals';
+import { Spotlight } from '@/components/Spotlight';
 
 /**
  * This is the ROOT layout. There is deliberately no `app/layout.tsx`: every
@@ -116,6 +117,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans min-h-dvh flex flex-col bg-page text-fg">
         <Reveals />
+        <Spotlight />
         <SiteHeader lang={lang} />
         <main className="flex-1">{children}</main>
         <SiteFooter lang={lang} />

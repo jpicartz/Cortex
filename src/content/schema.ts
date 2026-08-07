@@ -111,6 +111,39 @@ export const REGIONS = [
 ] as const;
 export type Region = (typeof REGIONS)[number];
 
+/**
+ * The waveform each state carries — a visual signature, not decoration.
+ *
+ * The shape says something true about the state: anxiety is fast and erratic,
+ * no-motivation is flat and low-amplitude, stuck-in-the-past loops back on
+ * itself, anger spikes and decays. Generators live in `components/wave.ts`.
+ *
+ * An enum so a typo fails the build like every other content mistake.
+ */
+export const SIGNATURES = [
+  /** Fast, sharp, irregular. */
+  'erratic',
+  /** Flat for a long time, then a late scramble. */
+  'stall',
+  /** Several waves overlapping until none is legible. */
+  'layered',
+  /** Amplitude that keeps climbing and never resolves. */
+  'runaway',
+  /** Returns to where it started, again. */
+  'loop',
+  /** One hard spike, then decay. */
+  'spike',
+  /** Long, slow, low-frequency. */
+  'slow',
+  /** Barely moves at all. */
+  'flat',
+  /** Two traces at different levels, side by side. */
+  'compare',
+  /** A spike followed by smaller repeats of itself. */
+  'echo',
+] as const;
+export type Signature = (typeof SIGNATURES)[number];
+
 /** Accent tokens; each has a light and dark value in globals.css. */
 export const ACCENTS = [
   'sky',
@@ -153,14 +186,38 @@ export const mentalStateSchema = z.object({
   blurb: bi,
   icon: z.enum(ICONS),
   accent: z.enum(ACCENTS),
+  signature: z.enum(SIGNATURES),
+
+  /**
+   * Size on the menu grid. Editorial weight — how much this state has to say —
+   * NOT a claim about how common it is. We have no analytics, and sizing tiles
+   * by guessed frequency would be asserting something we cannot support.
+   */
+  tile: z.enum(['feature', 'standard']),
 
   /** FEEL — "you might be experiencing…". Recognition before explanation. */
   feel: biList,
 
   /** UNDERSTAND — the mechanism, in plain language. */
-  mechanism: z.object({
+  mechanism: z
+    .object({
     headline: bi,
     body: biList,
+
+    /**
+     * Which part each body paragraph is talking about, by index.
+     *
+     * The mechanism is told as a pinned sequence: the amygdala paragraph should
+     * be on screen while the amygdala is lit. Omit this and paragraphs are split
+     * evenly across the parts, which is already close — ansiedad's prose runs
+     * alarm → labelling → breath, matching its three parts in order. Supply it
+     * only where the even split lands wrong.
+     *
+     * One array covers both languages: `biList` already guarantees `es` and
+     * `en` have the same number of paragraphs.
+     */
+    focus: z.array(z.number().int().min(0)).optional(),
+
     /** Labelled parts for the diagram. Two or three, never more. */
     parts: z
       .array(
@@ -182,7 +239,15 @@ export const mentalStateSchema = z.object({
       )
       .min(1)
       .max(3),
-  }),
+    })
+    .refine((m) => !m.focus || m.focus.length === m.body.es.length, {
+      message: 'mechanism.focus must have one entry per body paragraph',
+      path: ['focus'],
+    })
+    .refine((m) => !m.focus || m.focus.every((i) => i < m.parts.length), {
+      message: 'mechanism.focus points at a part index that does not exist',
+      path: ['focus'],
+    }),
 
   /** FIX */
   techniques: z.array(techniqueSchema).min(2),

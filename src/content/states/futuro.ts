@@ -5,6 +5,8 @@ export const futuro: MentalState = {
   slug: { es: 'preocupacion-por-el-futuro', en: 'worrying-about-the-future' },
   icon: 'timeline',
   accent: 'emerald',
+  signature: 'runaway',
+  tile: 'standard',
 
   label: { es: 'Preocupación por el futuro', en: 'Worrying about the future' },
   blurb: {

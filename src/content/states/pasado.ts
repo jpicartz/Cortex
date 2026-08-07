@@ -5,6 +5,8 @@ export const pasado: MentalState = {
   slug: { es: 'atrapado-en-el-pasado', en: 'stuck-in-the-past' },
   icon: 'history',
   accent: 'violet',
+  signature: 'loop',
+  tile: 'standard',
 
   label: { es: 'Atrapado en el pasado', en: 'Stuck in the past' },
   blurb: {

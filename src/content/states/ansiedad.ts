@@ -5,6 +5,8 @@ export const ansiedad: MentalState = {
   slug: { es: 'ansiedad', en: 'anxiety' },
   icon: 'activity-heartbeat',
   accent: 'sky',
+  signature: 'erratic',
+  tile: 'feature',
 
   label: { es: 'Ansiedad', en: 'Anxiety' },
   blurb: {

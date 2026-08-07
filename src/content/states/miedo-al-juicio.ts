@@ -5,6 +5,8 @@ export const miedoAlJuicio: MentalState = {
   slug: { es: 'miedo-al-juicio', en: 'fear-of-judgement' },
   icon: 'eye',
   accent: 'cyan',
+  signature: 'echo',
+  tile: 'standard',
 
   label: { es: 'Miedo al juicio', en: 'Fear of judgement' },
   blurb: {

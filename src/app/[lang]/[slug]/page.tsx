@@ -7,8 +7,9 @@ import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { TechniqueCard } from '@/components/TechniqueCard';
 import { Coach } from '@/components/Coach';
-import { BrainDiagram } from '@/components/brain/BrainDiagram';
+import { MechanismStage } from '@/components/brain/MechanismStage';
 import { CajalField } from '@/components/brain/CajalField';
+import { AmbientField } from '@/components/AmbientField';
 
 /** All 20 pages (10 states × 2 languages) are generated at build time. */
 export function generateStaticParams() {
@@ -64,6 +65,12 @@ export default async function StatePage({
       data-accent={state.accent}
       className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10"
     >
+      {/*
+        Mounted inside the accented wrapper, not the layout, so both fields
+        inherit this state's --hue for free.
+      */}
+      <AmbientField />
+
       {/*
         Sits in the margin, outside the prose column, and only above xl — see
         CajalField for why hairlines behind body text are not worth the risk.
@@ -127,42 +134,17 @@ export default async function StatePage({
         </ul>
       </section>
 
-      {/* ── UNDERSTAND: the mechanism. The reason this app exists. ──────── */}
-      <section className="mt-12">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
-          {UI.sectionUnderstand[lang]}
-        </h2>
-        <h3
-          data-reveal="unmask"
-          className="mt-3 font-display text-2xl leading-snug tracking-tight text-fg"
-        >
-          {mechanism.headline[lang]}
-        </h3>
+      {/*
+        ── UNDERSTAND: the mechanism. The reason this app exists. ─────────
 
-        {/*
-          Diagram before the prose: it names the players, then the text
-          explains what they do. The other order made the most striking thing
-          on the page arrive after the point had already been made.
-
-          It owns the parts now: it renders every name and role as
-          real text (all of them at once when motion is off), so there is no
-          separate list to keep in sync or duplicate.
-        */}
-        <BrainDiagram parts={mechanism.parts} lang={lang} />
-
-        <div className="mt-4 space-y-4">
-          {mechanism.body[lang].map((para) => (
-            <p
-              key={para.slice(0, 40)}
-              data-reveal="fade"
-              className="text-[1.0625rem] leading-[1.75] text-fg-soft"
-            >
-              {para}
-            </p>
-          ))}
-        </div>
-
-      </section>
+        One pinned sequence rather than a headline, then a diagram panel, then
+        the prose. Those three were separate blocks, which is what made the page
+        read as a deck: the panel pinned for three screens with a single name on
+        it while the paragraphs explaining that name waited below. The stage owns
+        all of it now, so the amygdala paragraph is on screen while the amygdala
+        is lit.
+      */}
+      <MechanismStage mechanism={mechanism} signature={state.signature} lang={lang} />
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}
       <section className="mt-12">

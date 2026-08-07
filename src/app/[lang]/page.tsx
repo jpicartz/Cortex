@@ -7,6 +7,8 @@ import { StateIcon } from '@/components/StateIcon';
 import { TransitionLink } from '@/components/TransitionLink';
 import { Hero } from '@/components/Hero';
 import { CajalField } from '@/components/brain/CajalField';
+import { AmbientField } from '@/components/AmbientField';
+import { StateWave } from '@/components/StateWave';
 
 export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
@@ -36,9 +38,10 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
 
   return (
     <>
+      <AmbientField />
       <Hero lang={lang} />
 
-      <div className="relative mx-auto max-w-3xl px-5 py-14 sm:py-20">
+      <div className="relative mx-auto max-w-5xl px-5 py-14 sm:py-20">
         {/* Mirrored to the opposite margin from the detail pages, so moving
             between the two does not feel like the same sticker twice. */}
         <CajalField side="left" />
@@ -57,36 +60,63 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
         </header>
 
         {/*
-          No fixed stagger any more. Each card reveals on its own distance from
-          the fold, so a row arrives together — they genuinely are at the same
-          height — and rows cascade as you scroll. The old delay ran on its own
-          clock, which made the last card feel late however fast you moved.
+          A bento grid on a six-column track: feature tiles take three columns,
+          standard ones two, so the rhythm breaks instead of marching. Sizing is
+          editorial — how much a state has to say — and NOT a claim about which
+          feelings are most common, which we have no data to support.
+
+          The track imposes a real constraint on that editorial choice: a row
+          only fills if it is two features (3+3) or three standards (2+2+2), so
+          features must fall in adjacent PAIRS in `content/index.ts` order.
+          Mixing them leaves a dead column at the end of every row. If you retile
+          a state, check the whole sequence still pairs up.
+
+          No fixed stagger. Each card reveals on its own distance from the fold,
+          so a row arrives together — they genuinely are at the same height —
+          and rows cascade as you scroll. The old delay ran on its own clock,
+          which made the last card feel late however fast you moved.
         */}
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
           {STATES.map((state) => (
-            <li key={state.id} data-accent={state.accent}>
+            <li
+              key={state.id}
+              data-accent={state.accent}
+              className={state.tile === 'feature' ? 'lg:col-span-3' : 'lg:col-span-2'}
+            >
               <TransitionLink
                 href={`/${lang}/${state.slug[lang]}`}
                 data-reveal="rise"
-                className="card-lift group flex h-full items-start gap-4 rounded-card border border-edge bg-card p-4 hover:border-accent/60"
+                className="card-lift spotlight group flex h-full flex-col overflow-hidden rounded-card border border-edge bg-card p-4 hover:border-accent/60"
               >
-                <span
-                  className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20"
-                  /* Pairs with the header on the detail page to morph across the
-                     navigation. Unique per state, so only one pair ever matches. */
-                  style={{ viewTransitionName: `icon-${state.id}` }}
-                >
-                  <StateIcon name={state.icon} className="size-6" />
+                <span className="flex items-start gap-4">
+                  <span
+                    className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20"
+                    /* Pairs with the header on the detail page to morph across the
+                       navigation. Unique per state, so only one pair ever matches. */
+                    style={{ viewTransitionName: `icon-${state.id}` }}
+                  >
+                    <StateIcon name={state.icon} className="size-6" />
+                  </span>
+
+                  <span className="min-w-0">
+                    <span className="block font-display text-lg font-medium leading-snug text-fg">
+                      {state.label[lang]}
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-fg-soft">
+                      {state.blurb[lang]}
+                    </span>
+                  </span>
                 </span>
 
-                <span className="min-w-0">
-                  <span className="block font-display text-lg font-medium leading-snug text-fg">
-                    {state.label[lang]}
-                  </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-fg-soft">
-                    {state.blurb[lang]}
-                  </span>
-                </span>
+                {/*
+                  The state's own rhythm — erratic for anxiety, flat for
+                  no-motivation, looping for stuck-in-the-past. `mt-auto` pins it
+                  to the bottom so tiles of different heights still line up.
+                */}
+                <StateWave
+                  signature={state.signature}
+                  className="mt-auto h-8 w-full pt-4 text-accent opacity-45 transition-opacity duration-300 group-hover:opacity-80"
+                />
               </TransitionLink>
             </li>
           ))}

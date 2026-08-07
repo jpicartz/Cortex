@@ -5,6 +5,8 @@ export const insomnio: MentalState = {
   slug: { es: 'no-puedo-dormir', en: 'cant-sleep' },
   icon: 'moon',
   accent: 'indigo',
+  signature: 'slow',
+  tile: 'feature',
 
   label: { es: 'No puedo dormir', en: "Can't sleep" },
   blurb: {

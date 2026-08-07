@@ -59,6 +59,24 @@
     /* Default hue; each [data-accent='…'] rule below overrides it. */
     --hue: 240;
 
+    /*
+      Ambient field strength — solved, not chosen.
+
+      This field sits behind every word on the site, unlike the Cajal tracery
+      which is confined to the margin. Sweeping all ten hues in both themes with
+      all three blobs stacked at peak, the largest alpha that keeps every text
+      token at or above 4.5:1 is 0.06 in dark and 0.02 in light. The first
+      attempt used 0.16 and failed thirty pairs, the worst at 2.92:1 — invisible
+      to the eye, illegible to anyone who needs the contrast.
+
+      A near-white page simply cannot carry much tint before `--c-fg-mute`
+      breaks, so light mode gets a third of dark's. Raise either of these and
+      re-run the sweep; do not raise them because the field "looks too subtle" on
+      a page with no text on it.
+    */
+    --field-alpha: 0.02;
+    --field-blur: 90px;
+
     /* Offset + soft blur, warm-neutral rather than pure black. */
     --shadow-lift:
       0 10px 28px -10px oklch(0.3 0.03 265 / 0.22),
@@ -85,6 +103,9 @@
     --l-accent-ink: 0.82;
     --l-accent-fill: 0.78;
     --chroma: 0.12;
+
+    /* 0.06 is the measured ceiling; 0.055 keeps a little headroom. */
+    --field-alpha: 0.055;
 
     /* Dark surfaces need a deeper, tighter shadow to read as lift at all. */
     --shadow-lift:
@@ -193,9 +214,18 @@
     Card lift. Shadows carry a real offset and a soft blur — a zero-offset
     halo reads as decoration rather than elevation.
   */
+  /*
+    Hover and press are the ONLY things on this site with overshoot.
+
+    A spring says "this object is physical and you just touched it", which is
+    exactly right for a direct manipulation and exactly wrong for an
+    explanation. Scroll, reveals and the diagram stay on calm ease-out: someone
+    reading about their own panic response should not have the page bouncing at
+    them. Tactility on contact, composure everywhere else.
+  */
   .card-lift {
     transition:
-      transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
       border-color 240ms ease;
   }
@@ -207,6 +237,39 @@
   .card-lift:active {
     transform: translateY(-1px);
     transition-duration: 90ms;
+  }
+
+  /*
+    Cursor spotlight. Coordinates come from a rAF-throttled listener that only
+    attaches for a fine pointer, so touch devices never run it and never pay for
+    it — and the fallback centre keeps the surface sane if they somehow do.
+  */
+  .spotlight {
+    position: relative;
+  }
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      200px circle at var(--mx, 50%) var(--my, 50%),
+      oklch(var(--l-accent) var(--chroma) var(--hue) / 0.18),
+      transparent 62%
+    );
+    opacity: 0;
+    transition: opacity 280ms ease;
+    pointer-events: none;
+  }
+  /* Direct children ride above the pseudo-element rather than under it. */
+  .spotlight > * {
+    position: relative;
+    z-index: 1;
+  }
+  @media (pointer: fine) {
+    .spotlight:hover::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -232,6 +295,78 @@
   .breath-field {
     animation: breathe 11s cubic-bezier(0.37, 0, 0.63, 1) infinite;
     will-change: transform, opacity;
+  }
+
+  /*
+    ── The ambient field ────────────────────────────────────────────────────
+
+    Three sources on deliberately co-prime-ish periods (41s / 53s / 67s), so the
+    composition never returns to the same arrangement within any session anyone
+    will sit through. A single blob, or three on the same clock, reads as a
+    pulsing shape; three out of phase read as weather.
+
+    Hue follows --hue, so the field takes the current state's accent for free.
+    Only `transform` animates — the gradient itself is static, because
+    re-rasterising a viewport-sized gradient every frame is the expensive way to
+    do this.
+  */
+  .ambient-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(var(--field-blur));
+    will-change: transform;
+  }
+
+  .ambient-blob-a {
+    inset-inline-start: -10%;
+    top: -12%;
+    width: 78vmax;
+    height: 78vmax;
+    background: radial-gradient(
+      circle,
+      oklch(0.7 0.13 var(--hue) / var(--field-alpha)),
+      transparent 68%
+    );
+    animation: drift-a 41s ease-in-out infinite;
+  }
+
+  .ambient-blob-b {
+    inset-inline-end: -18%;
+    top: 18%;
+    width: 62vmax;
+    height: 62vmax;
+    background: radial-gradient(
+      circle,
+      oklch(0.72 0.11 calc(var(--hue) + 55) / var(--field-alpha)),
+      transparent 70%
+    );
+    animation: drift-b 53s ease-in-out infinite;
+  }
+
+  .ambient-blob-c {
+    inset-inline-start: 22%;
+    bottom: -22%;
+    width: 68vmax;
+    height: 68vmax;
+    background: radial-gradient(
+      circle,
+      oklch(0.68 0.1 calc(var(--hue) - 45) / var(--field-alpha)),
+      transparent 72%
+    );
+    animation: drift-c 67s ease-in-out infinite;
+  }
+
+  @keyframes drift-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(6vw, 4vh, 0) scale(1.12); }
+  }
+  @keyframes drift-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.08); }
+    50% { transform: translate3d(-7vw, 6vh, 0) scale(0.94); }
+  }
+  @keyframes drift-c {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(0.96); }
+    50% { transform: translate3d(5vw, -5vh, 0) scale(1.1); }
   }
 
   /*

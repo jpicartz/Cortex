@@ -5,6 +5,8 @@ export const procrastinacion: MentalState = {
   slug: { es: 'procrastinacion', en: 'procrastination' },
   icon: 'hourglass',
   accent: 'amber',
+  signature: 'stall',
+  tile: 'standard',
 
   label: { es: 'Procrastinación', en: 'Procrastination' },
   blurb: {
