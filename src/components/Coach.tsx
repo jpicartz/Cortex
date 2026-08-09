@@ -104,7 +104,7 @@ export function Coach({ lang, stateId }: { lang: Lang; stateId: string }) {
       <h2 className="font-display text-xl leading-snug tracking-tight text-fg">
         {UI.coachHeading[lang]}
       </h2>
-      <p className="mt-1.5 text-sm leading-relaxed text-fg-soft">{UI.coachHelp[lang]}</p>
+      <p className="mt-1.5 max-w-prose text-sm leading-relaxed text-fg-soft">{UI.coachHelp[lang]}</p>
 
       <form onSubmit={submit} className="mt-4">
         <label htmlFor="situation" className="sr-only">

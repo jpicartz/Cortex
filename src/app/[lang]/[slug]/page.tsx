@@ -65,7 +65,7 @@ export default async function StatePage({
   return (
     <article
       data-accent={state.accent}
-      className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10"
+      className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10 min-[1440px]:max-w-4xl"
     >
       {/*
         Mounted inside the accented wrapper, not the layout, so both fields
@@ -169,7 +169,7 @@ export default async function StatePage({
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionFeel[lang]}
         </h2>
-        <ul className="mt-4 space-y-2.5">
+        <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
           {state.feel[lang].map((line) => (
             <li
               key={line}
@@ -222,7 +222,7 @@ export default async function StatePage({
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionSources[lang]}
         </h2>
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-4 grid gap-x-8 gap-y-2 sm:grid-cols-2">
           {state.sources.map((source) => (
             <li key={source.url} data-reveal="fade">
               <a

@@ -12,10 +12,11 @@ export type RailSection = { id: string; label: string };
  * It exists for two reasons at once. It answers "this page reads like a
  * document" — a numbered structure you can see is the clearest signal that a
  * page is something you move through rather than an article you scroll. And it
- * puts the dead margin to work: at 1470px the prose column leaves ~350px of
- * nothing on each side, and the right one already belongs to the Cajal tracery.
+ * puts the dead margin to work; the right margin already belongs to the Cajal
+ * tracery.
  *
- * Gated to `xl`, because below that the margin it lives in does not exist.
+ * Gated to `xl`, the width at which the margin can hold it in every column
+ * configuration. See the className for the arithmetic.
  *
  * Deliberately not an IntersectionObserver: this rides the same rAF loop as
  * every other scroll-linked thing on the site, so there is one measurement pass
@@ -30,7 +31,13 @@ export function SectionRail({ sections }: { sections: RailSection[] }) {
 
   const measure = useCallback(() => {
     const host = hostRef.current;
-    if (!host || host.offsetParent === null) return;
+    /*
+      NOT `offsetParent === null`: that is always true for a fixed element, so
+      the previous check would have early-returned on every frame and frozen the
+      rail the moment it stopped being absolutely positioned. A zero-width rect
+      is the honest test for `display: none`, whatever the position value.
+    */
+    if (!host || host.getBoundingClientRect().width === 0) return;
 
     /*
       "Active" is the last section whose top has passed the reading line, at a
@@ -81,43 +88,48 @@ export function SectionRail({ sections }: { sections: RailSection[] }) {
     <nav
       ref={hostRef}
       aria-label={sections.map((s) => s.label).join(', ')}
-      className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-screen -translate-x-1/2 xl:block"
-    >
-      <div className="absolute left-6 top-0 h-full w-44">
-        <div className="sticky top-1/3 pointer-events-auto">
-          <div className="relative pl-4">
-            {/* Track, and the filled portion of it. */}
-            <span
-              aria-hidden="true"
-              className="absolute left-0 top-1 bottom-1 w-px bg-edge"
-            />
-            <span
-              ref={progressRef}
-              aria-hidden="true"
-              className="absolute left-0 top-1 bottom-1 w-px origin-top bg-accent transition-transform duration-300 ease-out"
-              style={{ transform: 'scaleY(0)' }}
-            />
+      /*
+        Fixed to the viewport, not absolute inside the article.
 
-            <ol className="space-y-3.5">
-              {sections.map((section, index) => (
-                <li key={section.id}>
-                  <a
-                    ref={(el) => {
-                      itemRefs.current[index] = el;
-                    }}
-                    href={`#${section.id}`}
-                    data-active="false"
-                    className="group flex items-baseline gap-2.5 text-fg-mute transition-colors data-[active=true]:text-fg hover:text-fg"
-                  >
-                    <span className="text-[0.625rem] tabular-nums text-fg-mute transition-colors group-data-[active=true]:text-accent-ink">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="text-xs leading-snug">{section.label}</span>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </div>
+        Absolute meant the rail lived in a margin whose width is a function of
+        the content column — so widening the column would have silently slid the
+        rail under the text. Fixed positioning takes it out of that relationship
+        entirely. The breakpoint is where the space provably exists: at 1280px
+        with a 768px column each margin is 256px, and at 1440px with the widened
+        896px column it is 272px. This needs 200 in both cases.
+      */
+      className="pointer-events-none fixed inset-y-0 left-0 z-10 hidden w-44 pl-6 xl:block"
+    >
+      <div className="pointer-events-auto flex h-full flex-col justify-center">
+        <div className="relative pl-4">
+          {/* Track, and the filled portion of it. */}
+          <span aria-hidden="true" className="absolute bottom-1 left-0 top-1 w-px bg-edge" />
+          <span
+            ref={progressRef}
+            aria-hidden="true"
+            className="absolute bottom-1 left-0 top-1 w-px origin-top bg-accent transition-transform duration-300 ease-out"
+            style={{ transform: 'scaleY(0)' }}
+          />
+
+          <ol className="space-y-3.5">
+            {sections.map((section, index) => (
+              <li key={section.id}>
+                <a
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
+                  href={`#${section.id}`}
+                  data-active="false"
+                  className="group flex items-baseline gap-2.5 text-fg-mute transition-colors hover:text-fg data-[active=true]:text-fg"
+                >
+                  <span className="text-[0.625rem] tabular-nums text-fg-mute transition-colors group-data-[active=true]:text-accent-ink">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-xs leading-snug">{section.label}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </nav>

@@ -45,7 +45,7 @@ export function TechniqueCard({
     is a real cost, so up there the tool leads.
   */
   const stepsBlock = (
-    <div className="mt-5">
+    <div>
       <h4 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
         {UI.theSteps[lang]}
       </h4>
@@ -64,7 +64,7 @@ export function TechniqueCard({
 
   const toolBlock =
     tool && !stepsAreTheTool ? (
-      <div className="mt-6 rounded-card border border-edge bg-raised p-4">
+      <div className="rounded-card border border-edge bg-raised p-4">
         <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.practiceHere[lang]}
         </h4>
@@ -76,6 +76,47 @@ export function TechniqueCard({
         {tool.kind === 'braindump' && <BrainDump prompt={tool.prompt} lang={lang} />}
       </div>
     ) : null;
+
+  /*
+    ── Side by side, because neither half needs the full width. ─────────────
+
+    Stacked, this card measured 823px tall at 15% ink: a 176px breathing orb
+    centred in a 678×314 box, then four step rows spanning 678px to carry
+    359–634px of text. Two narrow things taking turns at being wide.
+
+    Ordering is still expressed as SOURCE order, not as grid placement, so the
+    rule above survives untouched — and on mobile, where this collapses to one
+    column, the reading order is automatically the right one.
+  */
+  const whyBlock = (
+    <p className="max-w-prose text-[0.9375rem] leading-relaxed text-fg-soft">
+      <span className="font-semibold text-fg">{UI.whyItWorks[lang]}: </span>
+      {technique.why[lang]}
+    </p>
+  );
+
+  /*
+    Checklist techniques have no separate tool — their steps ARE the exercise —
+    so there is nothing to put beside them and they stayed a single column with
+    every line using about half the card. The rationale moves into that space
+    instead of sitting above as a header paragraph, which both fills the card and
+    reads better: why it works belongs next to what you do, not before it.
+  */
+  const body = toolBlock ? (
+    <div
+      className={`mt-6 grid gap-5 lg:gap-6 ${
+        prominent ? 'lg:grid-cols-[0.85fr_1fr]' : 'lg:grid-cols-[1fr_0.85fr]'
+      }`}
+    >
+      {prominent ? toolBlock : stepsBlock}
+      {prominent ? stepsBlock : toolBlock}
+    </div>
+  ) : (
+    <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.7fr] lg:gap-8">
+      {stepsBlock}
+      <aside className="border-l-0 lg:border-l lg:border-edge lg:pl-6">{whyBlock}</aside>
+    </div>
+  );
 
   return (
     <section
@@ -105,19 +146,15 @@ export function TechniqueCard({
       </header>
 
       {prominent && (
-        <p className="mt-2 text-[0.9375rem] leading-relaxed text-fg-soft">
+        <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-fg-soft">
           {UI.startHereHelp[lang]}
         </p>
       )}
 
-      <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-fg-soft">
-        <span className="font-semibold text-fg">{UI.whyItWorks[lang]}: </span>
-        {technique.why[lang]}
-      </p>
+      {/* When there is no tool, this moves down into the second column instead. */}
+      {toolBlock && <div className="mt-2.5">{whyBlock}</div>}
 
-      {prominent && toolBlock}
-      {stepsBlock}
-      {!prominent && toolBlock}
+      {body}
     </section>
   );
 }
