@@ -195,6 +195,16 @@ export const mentalStateSchema = z.object({
    */
   tile: z.enum(['feature', 'standard']),
 
+  /**
+   * Which half of the menu this belongs to.
+   *
+   * `good` states render below a divider, never interleaved with `difficult`
+   * ones. Someone opening this app at 2am must not have to scroll past "I feel
+   * great" to reach the thing that helps, and a grid that mixes them would put
+   * a cheerful tile directly beside a panic one.
+   */
+  band: z.enum(['difficult', 'good']),
+
   /** FEEL — "you might be experiencing…". Recognition before explanation. */
   feel: biList,
 
@@ -217,6 +227,21 @@ export const mentalStateSchema = z.object({
      * `en` have the same number of paragraphs.
      */
     focus: z.array(z.number().int().min(0)).optional(),
+
+    /**
+     * Which body paragraph is the analogy, by index.
+     *
+     * Every state's mechanism turns on one concrete image — the smoke alarm,
+     * fifteen browser tabs, a photo redrawn by hand each time you look at it,
+     * the man clapping to keep elephants away. Those are the lines people
+     * actually carry out of the page, and burying them as paragraph three of
+     * five is what made a page of decent writing read as generated filler.
+     *
+     * Optional because not every state has one: `miedo-al-juicio` argues from
+     * evidence rather than image, and inventing an analogy to fill the slot
+     * would be worse than leaving it out.
+     */
+    analogy: z.number().int().min(0).optional(),
 
     /** Labelled parts for the diagram. Two or three, never more. */
     parts: z
@@ -247,9 +272,21 @@ export const mentalStateSchema = z.object({
     .refine((m) => !m.focus || m.focus.every((i) => i < m.parts.length), {
       message: 'mechanism.focus points at a part index that does not exist',
       path: ['focus'],
+    })
+    .refine((m) => m.analogy === undefined || m.analogy < m.body.es.length, {
+      message: 'mechanism.analogy points at a body paragraph that does not exist',
+      path: ['analogy'],
     }),
 
-  /** FIX */
+  /**
+   * FIX.
+   *
+   * ORDER IS LOAD-BEARING: `techniques[0]` is surfaced on its own at the top of
+   * the page as the fast path, above the mechanism, for someone who needs to
+   * stabilise before they can read anything. Author the most immediate
+   * intervention first — the physiological sigh for ansiedad, the ninety
+   * seconds for enojo — and do not reorder without checking what lands there.
+   */
   techniques: z.array(techniqueSchema).min(2),
 
   /** Citations are what separate this from a wellness blog. */

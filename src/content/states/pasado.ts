@@ -7,6 +7,7 @@ export const pasado: MentalState = {
   accent: 'violet',
   signature: 'loop',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Atrapado en el pasado', en: 'Stuck in the past' },
   blurb: {
@@ -40,7 +41,8 @@ export const pasado: MentalState = {
         'Enciende una red que produce pensamientos sobre ti mismo y viajes mentales en el tiempo. Es útil: te deja aprender de lo que viviste. Pero cuando se atora en un solo recuerdo deja de aprender y solo repite.',
         'Encima, tu memoria está inclinada hacia lo negativo. Lo que salió mal se guarda con más detalle que lo que salió bien, porque olvidar un error costaba más caro que olvidar un acierto.',
         'Y aquí está lo que casi nadie sabe. Un recuerdo no es un archivo que abres y cierras intacto.',
-        'Cada vez que lo traes al presente se vuelve maleable un rato y se vuelve a guardar. Es como una foto que vuelves a dibujar a mano cada vez que la miras: nunca sale igual, y se parece cada vez más al último trazo.',
+        'Cada vez que lo traes al presente se vuelve maleable un rato y se vuelve a guardar.',
+        'Es como una foto que vuelves a dibujar a mano cada vez que la miras: nunca sale igual, y se parece cada vez más al último trazo.',
         'Si lo recuperas con vergüenza, lo guardas con más vergüenza. Repasarlo cien veces no lo desgasta. Lo profundiza.',
         'Eso explica por qué escribirlo funciona. Mientras siga siendo una sensación difusa no tiene principio ni final. Al ponerlo en palabras con orden se vuelve una historia, y un evento con estructura pesa mucho menos que un bucle sin forma.',
       ],
@@ -49,11 +51,13 @@ export const pasado: MentalState = {
         'It switches on a network that produces self-referential thought and mental time travel. That\'s useful — it lets you learn from what you lived. But when it sticks on one memory it stops learning and just repeats.',
         'On top of that, your memory tilts negative. What went wrong is stored in more detail than what went right, because forgetting a mistake cost more than forgetting a success.',
         'And here\'s the part almost nobody knows. A memory is not a file you open and close intact.',
-        'Every time you bring it into the present it becomes editable for a while, then gets saved again. It\'s like a photo you redraw by hand each time you look at it — it never comes out the same, and it looks more like your last sketch every time.',
+        'Every time you bring it into the present it becomes editable for a while, then gets saved again.',
+        'It\'s like a photo you redraw by hand each time you look at it — it never comes out the same, and it looks more like your last sketch every time.',
         'Retrieve it with shame and you re-save it with more shame. Replaying it a hundred times doesn\'t wear it down. It deepens it.',
         'That explains why writing it out works. While it stays a diffuse feeling it has no beginning and no end. Ordered into words it becomes a story, and an event with structure weighs far less than a shapeless loop.',
       ],
     },
+    analogy: 5,
     parts: [
       {
         name: { es: 'Red neuronal por defecto', en: 'Default mode network' },

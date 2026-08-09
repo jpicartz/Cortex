@@ -63,6 +63,21 @@ export const UI = {
     en: 'There is no region to point at here — what is involved are processes, not places in the brain.',
   },
 
+  // ── The fast path ───────────────────────────────────────────────────────
+  /**
+   * Shown above everything else on a state page.
+   *
+   * The first technique used to sit 4,010px down — past the whole mechanism —
+   * which meant someone mid-panic had to read four screens of neuroscience
+   * before reaching anything that would help. The wording has to give explicit
+   * permission to skip the rest, or the page still reads as homework.
+   */
+  startHere: { es: 'Empieza aquí', en: 'Start here' },
+  startHereHelp: {
+    es: 'Si lo que quieres es bajarle ahora mismo, haz esto y ya. Lo de abajo puede esperar a que estés mejor.',
+    en: 'If you just need this to come down right now, do this and nothing else. The rest can wait until you are steadier.',
+  },
+
   // ── Techniques ──────────────────────────────────────────────────────────
   whyItWorks: { es: 'Por qué funciona', en: 'Why it works' },
   theSteps: { es: 'Los pasos', en: 'The steps' },

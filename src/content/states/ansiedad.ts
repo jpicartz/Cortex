@@ -7,6 +7,7 @@ export const ansiedad: MentalState = {
   accent: 'sky',
   signature: 'erratic',
   tile: 'feature',
+  band: 'difficult',
 
   label: { es: 'Ansiedad', en: 'Anxiety' },
   blurb: {
@@ -54,6 +55,7 @@ export const ansiedad: MentalState = {
         'The way out runs backwards from what most people try. You don\'t calm the mind to calm the body. You calm the body first, and breathing is the one part of that alarm you can operate on purpose.',
       ],
     },
+    analogy: 2,
     parts: [
       {
         name: { es: 'Amígdala', en: 'Amygdala' },

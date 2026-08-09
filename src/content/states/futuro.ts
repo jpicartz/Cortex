@@ -7,6 +7,7 @@ export const futuro: MentalState = {
   accent: 'emerald',
   signature: 'runaway',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Preocupación por el futuro', en: 'Worrying about the future' },
   blurb: {
@@ -41,7 +42,8 @@ export const futuro: MentalState = {
         'Hay una razón por la que el bucle se sostiene: para tu sistema nervioso, "no sé" se parece más a "peligro" que a "neutro". La incertidumbre en sí misma es incómoda.',
         'Por eso a veces prefieres una mala noticia confirmada antes que seguir sin saber, aunque la duda todavía deje abierta la posibilidad de que todo esté bien.',
         'Y aquí está el mecanismo que lo mantiene vivo. Preocuparte se siente como estar haciendo algo. Da la sensación de que te estás preparando.',
-        'Encima, lo que temías casi nunca ocurre, así que tu cerebro le da el crédito a la preocupación. Es como el tipo que aplaude para espantar elefantes: no hay elefantes, así que concluye que aplaudir funciona.',
+        'Encima, lo que temías casi nunca ocurre, así que tu cerebro le da el crédito a la preocupación.',
+        'Es como el tipo que aplaude para espantar elefantes: no hay elefantes, así que concluye que aplaudir funciona.',
         'Lo que rompe el bucle no es tranquilizarte, porque la calma prestada se gasta en minutos. Lo que lo rompe es llevar la pregunta hasta el final. El bucle sobrevive porque da vueltas justo antes del punto donde tendrías que ver qué harías de verdad si eso pasara.',
       ],
       en: [
@@ -50,10 +52,12 @@ export const futuro: MentalState = {
         'There\'s a reason the loop sustains itself: to your nervous system, "I don\'t know" resembles "danger" more than it resembles "neutral". Uncertainty is uncomfortable in itself.',
         'It\'s why you sometimes prefer confirmed bad news to not knowing, even though not knowing still leaves open the possibility that everything is fine.',
         'And here\'s the mechanism keeping it alive. Worrying feels like doing something. It gives the sense that you\'re preparing.',
-        'On top of that, the thing you feared almost never happens, so your brain credits the worry. It\'s the man clapping to keep elephants away: no elephants, therefore clapping works.',
+        'On top of that, the thing you feared almost never happens, so your brain credits the worry.',
+        'It\'s the man clapping to keep elephants away: no elephants, therefore clapping works.',
         'What breaks the loop isn\'t reassurance — borrowed calm is spent in minutes. What breaks it is taking the question all the way down. The loop survives by circling just short of the point where you\'d have to see what you would actually do.',
       ],
     },
+    analogy: 6,
     parts: [
       {
         name: { es: 'Cerebro predictivo', en: 'Predictive brain' },

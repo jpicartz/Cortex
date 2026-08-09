@@ -66,7 +66,7 @@ export function TransitionLink({ href, onClick, ...rest }: Props) {
 
     event.preventDefault();
 
-    document.startViewTransition(
+    const transition = document.startViewTransition(
       () =>
         new Promise<void>((resolve) => {
           let settled = false;
@@ -81,6 +81,21 @@ export function TransitionLink({ href, onClick, ...rest }: Props) {
           startTransition(() => router.push(String(href)));
         }),
     );
+
+    /*
+      A skipped transition REJECTS these promises, and nothing here awaits them,
+      so every skip surfaced as an unhandled rejection —
+      `InvalidStateError: Transition was aborted because of invalid state`, twice
+      per navigation, one per promise. It is not a failure state: a transition is
+      legitimately skipped when the tab is hidden, when a second navigation
+      starts before the first finishes, or when the browser simply declines. The
+      navigation itself has already happened by then.
+
+      Swallowing them deliberately, rather than letting the console fill with
+      errors that make a working page look broken.
+    */
+    transition.ready.catch(() => {});
+    transition.finished.catch(() => {});
   }
 
   return <Link href={href} onClick={handleClick} {...rest} />;

@@ -34,22 +34,53 @@ export function BrainGraphic({
   lang,
   registerRegion,
   className,
+  /**
+   * Number each region on the figure, keyed to the same numbers beside the
+   * prose. This is how the diagram earns its place when there is no motion to
+   * link a region to the paragraph about it.
+   *
+   * Numbers rather than names on purpose: a text label long enough to read
+   * ("Corteza prefrontal") needs margin to sit in, which would mean re-padding
+   * the viewBox and undoing the crop that just made the drawing 24% bigger.
+   * Labels also collide unpredictably once the language changes. A numeral is
+   * two characters in every language and always fits.
+   */
+  numbered = false,
 }: {
   parts: Part[];
   lang: Lang;
   /** Called with each region group so the stage can drive its opacity. */
   registerRegion?: (index: number, el: SVGGElement | null) => void;
   className?: string;
+  numbered?: boolean;
 }) {
   return (
     <svg
-      viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
+      viewBox={`${VIEWBOX.x} ${VIEWBOX.y} ${VIEWBOX.width} ${VIEWBOX.height}`}
       className={className ?? 'w-full'}
       aria-hidden="true"
       focusable="false"
     >
       <defs>
-        <filter id="brain-glow" x="-40%" y="-40%" width="180%" height="180%">
+        {/*
+          The filter region is in USER SPACE and covers the whole viewBox.
+
+          The default `objectBoundingBox` region scales with each element's own
+          box, so `-40% / 180%` gave the amygdala dot 6.4 units of falloff room
+          and the vagus stroke 5.2 — where `stdDeviation="6"` needs about 18
+          before the gaussian has faded to nothing. All three regions were being
+          sliced mid-fade, which is what drew a hard rectangle around every
+          highlight. A fixed user-space region cannot be outgrown by any shape,
+          so nothing clips at any size.
+        */}
+        <filter
+          id="brain-glow"
+          filterUnits="userSpaceOnUse"
+          x={VIEWBOX.x}
+          y={VIEWBOX.y}
+          width={VIEWBOX.width}
+          height={VIEWBOX.height}
+        >
           <feGaussianBlur stdDeviation="6" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -98,6 +129,40 @@ export function BrainGraphic({
           </g>
         ) : null,
       )}
+
+      {/*
+        Markers sit above every region so a badge is never buried under the
+        shape it points at. `anchor` has been carried in REGION_GEOMETRY since
+        the geometry was authored and was waiting for exactly this.
+      */}
+      {numbered &&
+        parts.map((part, index) => {
+          if (!part.region) return null;
+          const { x, y } = REGION_GEOMETRY[part.region].anchor;
+          return (
+            /*
+              `accent-fill`, not `accent`. They differ only in light mode — 0.5
+              lightness against 0.62 — but white numerals on `accent` measured
+              3.26–3.91:1 across all ten hues, every one of them under AA. The
+              fill token exists for exactly this pairing; `.btn-accent` already
+              uses it with `on-accent` text.
+            */
+            <g key={`marker-${part.name[lang]}`} className="text-accent-fill">
+              <circle cx={x} cy={y} r={8} fill="currentColor" />
+              <text
+                x={x}
+                y={y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={9}
+                fontWeight={700}
+                className="fill-on-accent"
+              >
+                {index + 1}
+              </text>
+            </g>
+          );
+        })}
     </svg>
   );
 }

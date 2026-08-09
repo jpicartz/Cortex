@@ -87,14 +87,20 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
                 href={`/${lang}/${state.slug[lang]}`}
                 data-reveal="rise"
                 className="card-lift spotlight group flex h-full flex-col overflow-hidden rounded-card border border-edge bg-card p-4 hover:border-accent/60"
+                /*
+                  The whole card is the shared element, not just the icon. It
+                  pairs with the detail page's header block, which carries the
+                  same composition so the morph lands on a matching shape.
+
+                  Only ONE element may hold a given view-transition-name at a
+                  time, which is why the icon no longer has its own: a nested
+                  name is lifted out of its parent's snapshot and would leave an
+                  icon-shaped hole in the card mid-flight.
+                */
+                style={{ viewTransitionName: `card-${state.id}` }}
               >
                 <span className="flex items-start gap-4">
-                  <span
-                    className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20"
-                    /* Pairs with the header on the detail page to morph across the
-                       navigation. Unique per state, so only one pair ever matches. */
-                    style={{ viewTransitionName: `icon-${state.id}` }}
-                  >
+                  <span className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20">
                     <StateIcon name={state.icon} className="size-6" />
                   </span>
 

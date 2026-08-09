@@ -7,6 +7,7 @@ export const desmotivacion: MentalState = {
   accent: 'orange',
   signature: 'flat',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Sin motivación', en: 'No motivation' },
   blurb: {
@@ -54,6 +55,7 @@ export const desmotivacion: MentalState = {
         'What raises it is the opposite of what you crave in that state: effort, movement, morning light, tolerated boredom. And motivation doesn\'t come before action. It comes after starting.',
       ],
     },
+    analogy: 4,
     parts: [
       {
         name: { es: 'Línea base de dopamina', en: 'Dopamine baseline' },

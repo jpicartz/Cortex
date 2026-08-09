@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 
 import { allStateParams, getStateBySlug, isLang } from '@/content';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
+import { StateWave } from '@/components/StateWave';
+import { TransitionLink } from '@/components/TransitionLink';
 import { TechniqueCard } from '@/components/TechniqueCard';
 import { Coach } from '@/components/Coach';
 import { MechanismStage } from '@/components/brain/MechanismStage';
 import { CajalField } from '@/components/brain/CajalField';
 import { AmbientField } from '@/components/AmbientField';
+import { SectionRail } from '@/components/SectionRail';
 
 /** All 20 pages (10 states × 2 languages) are generated at build time. */
 export function generateStaticParams() {
@@ -77,7 +79,22 @@ export default async function StatePage({
       */}
       <CajalField side="right" />
 
-      <Link
+      {/*
+        Fills the left margin, opposite the tracery. Anchors below match these
+        ids; keep them in step or the rail silently marks the wrong section.
+      */}
+      <SectionRail
+        sections={[
+          { id: 'start', label: UI.startHere[lang] },
+          { id: 'feel', label: UI.sectionFeel[lang] },
+          { id: 'understand', label: UI.sectionUnderstand[lang] },
+          { id: 'fix', label: UI.sectionFix[lang] },
+          { id: 'sources', label: UI.sectionSources[lang] },
+        ]}
+      />
+
+      {/* A TransitionLink, so going back morphs too rather than only forward. */}
+      <TransitionLink
         href={`/${lang}`}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-fg-mute transition-colors hover:text-fg"
       >
@@ -94,26 +111,61 @@ export default async function StatePage({
           <path d="M15 6 9 12l6 6" />
         </svg>
         {UI.backToMenu[lang]}
-      </Link>
+      </TransitionLink>
 
-      {/* ── Header. The icon is the morph target from the menu card. ───── */}
-      <header className="mt-6 flex items-start gap-4">
-        <span
-          className="grid size-14 shrink-0 place-items-center rounded-card bg-accent/12 text-accent-ink"
-          style={{ viewTransitionName: `icon-${state.id}` }}
-        >
-          <StateIcon name={state.icon} className="size-8" />
-        </span>
-        <div className="min-w-0 pt-0.5">
-          <h1 className="font-display text-3xl leading-tight tracking-tight sm:text-4xl">
-            {state.label[lang]}
-          </h1>
-          <p className="mt-1.5 text-base leading-relaxed text-fg-soft">{state.blurb[lang]}</p>
+      {/*
+        ── Header, and the morph target from the menu card. ───────────────
+
+        It carries the card's own composition — bordered, rounded, icon tile,
+        label, blurb, waveform — because a shared-element transition only
+        convinces if the destination resembles the thing that grew into it.
+        Land on a different shape and the morph visibly snaps at the end.
+
+        The name lives here and NOT on the icon: a nested `view-transition-name`
+        is lifted out of its parent's snapshot, so naming both would punch an
+        icon-shaped hole in the card as it expands. The icon still travels, as
+        part of the card.
+      */}
+      <header
+        className="mt-6 overflow-hidden rounded-card border border-edge bg-card p-5"
+        style={{ viewTransitionName: `card-${state.id}` }}
+      >
+        <div className="flex items-start gap-4">
+          <span className="grid size-14 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink">
+            <StateIcon name={state.icon} className="size-8" />
+          </span>
+          <div className="min-w-0 pt-0.5">
+            <h1 className="font-display text-3xl leading-tight tracking-tight sm:text-4xl">
+              {state.label[lang]}
+            </h1>
+            <p className="mt-1.5 text-base leading-relaxed text-fg-soft">{state.blurb[lang]}</p>
+          </div>
         </div>
+        <StateWave
+          signature={state.signature}
+          className="mt-4 h-8 w-full text-accent opacity-45"
+        />
       </header>
 
+      {/*
+        ── The fast path. ────────────────────────────────────────────────
+
+        The first technique used to sit 4,010px down, past the entire mechanism.
+        Someone mid-panic should not have to read four screens of neuroscience
+        to reach a breathing exercise, so the primary technique is surfaced here
+        with its tool already open.
+
+        `techniques[0]` by convention: the content is authored most-immediate
+        first (physiological sigh for ansiedad, ninety seconds for enojo). It
+        deliberately appears again in the full list below — this block is for
+        someone who will not scroll, the list is for someone reading through.
+      */}
+      <section id="start" className="mt-6 scroll-mt-8">
+        <TechniqueCard technique={state.techniques[0]} lang={lang} prominent />
+      </section>
+
       {/* ── FEEL: recognition before explanation. ───────────────────────── */}
-      <section className="mt-10">
+      <section id="feel" className="mt-10 scroll-mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionFeel[lang]}
         </h2>
@@ -147,7 +199,7 @@ export default async function StatePage({
       <MechanismStage mechanism={mechanism} signature={state.signature} lang={lang} />
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}
-      <section className="mt-12">
+      <section id="fix" className="mt-12 scroll-mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionFix[lang]}
         </h2>
@@ -166,7 +218,7 @@ export default async function StatePage({
       </section>
 
       {/* ── SOURCES: the line between this and a wellness blog. ─────────── */}
-      <section className="mt-12">
+      <section id="sources" className="mt-12 scroll-mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
           {UI.sectionSources[lang]}
         </h2>

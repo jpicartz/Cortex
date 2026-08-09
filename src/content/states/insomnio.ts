@@ -7,6 +7,7 @@ export const insomnio: MentalState = {
   accent: 'indigo',
   signature: 'slow',
   tile: 'feature',
+  band: 'difficult',
 
   label: { es: 'No puedo dormir', en: "Can't sleep" },
   blurb: {
@@ -54,6 +55,7 @@ export const insomnio: MentalState = {
         'And there\'s a piece almost nobody accounts for. Lie awake and frustrated night after night and your brain learns the association: bed becomes the place where one lies awake thinking. Protecting that association is the reason behind the counterintuitive advice to get up.',
       ],
     },
+    analogy: 3,
     parts: [
       {
         name: { es: 'Presión de sueño', en: 'Sleep pressure' },

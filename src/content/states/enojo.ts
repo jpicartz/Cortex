@@ -7,6 +7,7 @@ export const enojo: MentalState = {
   accent: 'rose',
   signature: 'spike',
   tile: 'feature',
+  band: 'difficult',
 
   label: { es: 'Enojo', en: 'Anger' },
   blurb: {
@@ -39,7 +40,8 @@ export const enojo: MentalState = {
         'Cuando algo te enoja, tu cuerpo suelta una descarga de adrenalina y cortisol.',
         'Esa descarga tiene vida corta: del orden de un minuto y medio desde que se dispara hasta que se limpia sola, si no le agregas nada. Es la regla de los noventa segundos que popularizó la neuroanatomista Jill Bolte Taylor.',
         'Lo que la mantiene viva es el pensamiento. Cada vez que repites la escena, ensayas la respuesta perfecta o te acuerdas de las otras veces que hizo lo mismo, la disparas otra vez desde cero.',
-        'El enojo de los primeros noventa segundos te pasó. El de la hora siguiente lo estás produciendo tú, sin querer. Es una fogata que se apagaría sola y a la que le sigues echando leña.',
+        'El enojo de los primeros noventa segundos te pasó. El de la hora siguiente lo estás produciendo tú, sin querer.',
+        'Es una fogata que se apagaría sola y a la que le sigues echando leña.',
         'Eso no significa que el enojo esté mal ni que debas tragártelo. El enojo es información: casi siempre marca un límite cruzado o algo que te importa.',
         'El problema no es sentirlo. Es quedarte atrapado alimentándolo, que es donde deja de informar y solo desgasta.',
         'Y hay algo que funciona sorprendentemente bien: ponerle nombre. Cuando pasas de sentir la emoción a nombrarla con palabras precisas, la actividad de la amígdala baja. No es reprimir ni fingir calma. Nombrarlo con precisión ya lo baja de intensidad.',
@@ -48,12 +50,14 @@ export const enojo: MentalState = {
         'When something angers you, your body releases a surge of adrenaline and cortisol.',
         'That surge is short-lived: on the order of a minute and a half from trigger to clearing on its own, if you add nothing to it. It is the ninety-second rule popularised by the neuroanatomist Jill Bolte Taylor.',
         'What keeps it alive is thought. Every time you replay the scene, rehearse the perfect comeback, or remember the other times they did this, you fire it again from zero.',
-        'The anger of the first ninety seconds happened to you. The anger of the next hour, you\'re producing. It\'s a fire that would go out on its own and you keep feeding it wood.',
+        'The anger of the first ninety seconds happened to you. The anger of the next hour, you\'re producing.',
+        'It\'s a fire that would go out on its own and you keep feeding it wood.',
         'That doesn\'t mean anger is wrong or that you should swallow it. Anger is information — it almost always marks a crossed boundary or something you care about.',
         'The problem isn\'t feeling it. It\'s getting stuck feeding it, which is where it stops informing and just wears you down.',
         'And one thing works surprisingly well: naming it. When you move from feeling the emotion to labelling it in precise words, amygdala activity drops. This isn\'t suppression or faking calm. Naming it precisely already lowers the volume.',
       ],
     },
+    analogy: 4,
     parts: [
       {
         name: { es: 'Amígdala', en: 'Amygdala' },

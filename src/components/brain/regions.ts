@@ -18,7 +18,23 @@ import type { Region } from '@/content/schema';
  * outline should stay legible as a brain, not become a background for circles.
  */
 
-export const VIEWBOX = { width: 360, height: 300 } as const;
+/**
+ * Cropped to the drawing, not to the coordinate space it was authored in.
+ *
+ * The geometry below was laid out inside a 360×300 grid, but the ink only ever
+ * occupies x 50→312, y 46→273. Rendering the full 360×300 meant 27% of the
+ * allotted column was empty padding — a 641px column showing a 467px brain,
+ * which reads as a small illustration marooned in white space.
+ *
+ * The margin is 20 units rather than 0, and that number is derived, not chosen:
+ * `#brain-glow` uses `stdDeviation="6"`, a gaussian is visually finished at
+ * roughly 3σ, and an SVG root clips at its viewport — so anything less than 18
+ * units of margin shears the glow off a region near an edge. At 14 the vagus
+ * pathway, which runs closest to the bottom, was still being cut.
+ *
+ * Raising `stdDeviation` means raising this in step.
+ */
+export const VIEWBOX = { x: 30, y: 26, width: 303, height: 267 } as const;
 
 export type Shape =
   /** Filled blob — for compact nuclei. */

@@ -70,7 +70,7 @@ export function MechanismStage({
   signature: Signature;
   lang: Lang;
 }) {
-  const { headline, body, parts, focus } = mechanism;
+  const { headline, body, parts, focus, analogy } = mechanism;
 
   const [scrollMode, setScrollMode] = useState(false);
 
@@ -81,6 +81,9 @@ export function MechanismStage({
   const visualRef = useRef<HTMLDivElement>(null);
   const wavePathRefs = useRef<(SVGPathElement | null)[]>([]);
   const nearestRef = useRef(-1);
+  const overlayRef = useRef<SVGSVGElement>(null);
+  const connectorRef = useRef<SVGPathElement>(null);
+  const textColRef = useRef<HTMLDivElement>(null);
 
   const hasAnatomy = parts.some((part) => part.region);
 
@@ -112,6 +115,49 @@ export function MechanismStage({
       // moment the stage pins and the last still is when it releases.
       const position = 0.5 + p * (parts.length - 1);
 
+      /*
+        ── Read pass ────────────────────────────────────────────────────────
+
+        Every rect is measured BEFORE anything is written. Interleaving a
+        `getBoundingClientRect()` with a style write forces a synchronous layout
+        on each element, once per frame, for as long as the stage is pinned.
+        Nothing below this block reads geometry.
+      */
+      let leader: { x1: number; y1: number; x2: number; y2: number; weight: number } | null = null;
+      const overlay = overlayRef.current;
+      const overlayBox = overlay?.getBoundingClientRect();
+
+      // Zero width means the overlay is `display:none` — it is gated to `lg`,
+      // because below that the columns stack and a leader would cross the text.
+      if (overlay && overlayBox && overlayBox.width > 0 && textColRef.current) {
+        let best = 0;
+        let bestWeight = -1;
+        for (let i = 0; i < parts.length; i++) {
+          const w = graphicWeight(position, i);
+          if (w > bestWeight) {
+            bestWeight = w;
+            best = i;
+          }
+        }
+
+        const group = regionRefs.current[best];
+        // The group carries the glow filter, whose effect region inflates its
+        // box. Measure the shape inside it instead so the line starts on the ink.
+        const shape = group?.querySelector('ellipse, path') ?? group;
+        if (shape) {
+          const r = shape.getBoundingClientRect();
+          const t = textColRef.current.getBoundingClientRect();
+          leader = {
+            x1: r.right - overlayBox.left,
+            y1: r.top + r.height / 2 - overlayBox.top,
+            x2: t.left - overlayBox.left - 14,
+            y2: t.top + 30 - overlayBox.top,
+            weight: bestWeight,
+          };
+        }
+      }
+
+      // ── Write pass ───────────────────────────────────────────────────────
       for (let i = 0; i < parts.length; i++) {
         const weight = beatWeight(position, i);
 
@@ -154,6 +200,40 @@ export function MechanismStage({
         nearestRef.current = nearest;
         for (let i = 0; i < parts.length; i++) {
           pipRefs.current[i]?.setAttribute('aria-current', String(i === nearest));
+        }
+      }
+
+      /*
+        The leader line. This is what makes the diagram and the prose read as
+        one figure rather than two columns sharing a row: the reader can see
+        which shape the paragraph is about, instead of inferring it.
+
+        A cubic with horizontal control points, so it leaves the region and
+        arrives at the text flat rather than at an angle.
+      */
+      const connector = connectorRef.current;
+      if (connector) {
+        if (leader) {
+          const mid = (leader.x1 + leader.x2) / 2;
+          connector.setAttribute(
+            'd',
+            `M${leader.x1.toFixed(1)} ${leader.y1.toFixed(1)}` +
+              `C${mid.toFixed(1)} ${leader.y1.toFixed(1)},` +
+              `${mid.toFixed(1)} ${leader.y2.toFixed(1)},` +
+              `${leader.x2.toFixed(1)} ${leader.y2.toFixed(1)}`,
+          );
+          /*
+            The line must be GONE while the handoff happens, not merely dimmer.
+            Its anchor jumps from one region to the next in a single frame, and
+            at the midpoint both regions weigh 0.5, so a plain `weight * 0.55`
+            left it around 30% opaque at exactly the moment it teleports across
+            the diagram. Fading out below 0.55 means it only ever appears once
+            one region clearly owns the frame.
+          */
+          const visible = Math.max(0, (leader.weight - 0.55) / 0.45);
+          connector.style.opacity = (visible * 0.55).toFixed(3);
+        } else {
+          connector.style.opacity = '0';
         }
       }
 
@@ -226,20 +306,37 @@ export function MechanismStage({
     </svg>
   );
 
+  /** The same figure, annotated — only the static path needs the numbers. */
+  const staticVisual = hasAnatomy ? (
+    <BrainGraphic parts={parts} lang={lang} numbered className="mx-auto w-full" />
+  ) : (
+    visual
+  );
+
   const heading = (
     <>
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
-        {UI.sectionUnderstand[lang]}
-      </h2>
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="h-px w-6 bg-accent" />
+        <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">
+          {UI.sectionUnderstand[lang]}
+        </h2>
+      </div>
       <h3 className="mt-3 font-display text-2xl leading-snug tracking-tight text-fg sm:text-3xl">
         {headline[lang]}
       </h3>
     </>
   );
 
-  const beatBody = (index: number) => (
+  const beatBody = (index: number, numbered = false) => (
     <>
       <p className="font-display text-[clamp(1.6rem,3.4vw,2.5rem)] leading-[1.1] tracking-tight text-fg">
+        {/* Keyed to the marker on the figure — this is what replaces the
+            connector line when there is no motion to draw one. */}
+        {numbered && (
+          <span className="mr-3 inline-grid size-8 shrink-0 translate-y-[-0.15em] place-items-center rounded-full bg-accent-fill align-middle text-sm font-bold text-on-accent">
+            {index + 1}
+          </span>
+        )}
         {parts[index].name[lang]}
         {!parts[index].region && (
           <span className="ml-2 align-middle text-xs font-normal uppercase tracking-wider text-fg-mute">
@@ -249,31 +346,79 @@ export function MechanismStage({
       </p>
       <p className="mt-2 text-[0.875rem] leading-relaxed text-fg-mute sm:text-[0.95rem]">{parts[index].role[lang]}</p>
       <div className="mt-4 space-y-3 sm:mt-5">
-        {beats[index].map((paragraph) => (
-          <p key={paragraph} className="text-[0.9375rem] leading-[1.65] text-fg-soft sm:text-[1.0625rem] sm:leading-[1.7]">
-            {body[lang][paragraph]}
-          </p>
-        ))}
+        {beats[index].map((paragraph, position) => {
+          /*
+            Three registers instead of one wall of identical grey.
+
+            The analogy is lifted out with a rule: it is the sentence people
+            actually carry away, and it was previously indistinguishable from
+            the paragraph before it. The first paragraph of a beat leads —
+            slightly larger, closer to full foreground — because a beat that
+            opens at the same weight it closes at has no shape.
+          */
+          if (paragraph === analogy) {
+            return (
+              <p
+                key={paragraph}
+                className="my-4 border-l-2 border-accent py-0.5 pl-4 font-display text-[1.0625rem] leading-[1.5] text-fg sm:text-[1.1875rem]"
+              >
+                {body[lang][paragraph]}
+              </p>
+            );
+          }
+
+          const leads = position === 0;
+          return (
+            <p
+              key={paragraph}
+              className={
+                leads
+                  ? 'text-[1rem] leading-[1.6] text-fg-soft sm:text-[1.125rem] sm:leading-[1.65]'
+                  : 'text-[0.9375rem] leading-[1.65] text-fg-soft sm:text-[1.0625rem] sm:leading-[1.7]'
+              }
+            >
+              {body[lang][paragraph]}
+            </p>
+          );
+        })}
       </div>
     </>
   );
 
-  // ── Static: server render, no JS, or reduced motion ──────────────────────
+  /*
+    ── Static: server render, no JS, or reduced motion ──────────────────────
+
+    Deliberately a DESIGN, not a fallback. It used to be a 318px column with the
+    brain shrunk into it and all three parts dumped into one list — which read,
+    accurately, as plain text with a small picture next to it.
+
+    Now it is the same full width as the animated version, the figure is
+    annotated and sticks to the viewport while you read past it, and each part is
+    numbered to the marker pointing at it. That last part is what the motion was
+    doing: saying which shape this paragraph is about. Stating it works with no
+    motion at all.
+
+    This matters more than a fallback usually would. This app is for anxious
+    people, and anxious people are disproportionately likely to have reduced
+    motion switched on.
+  */
   if (!scrollMode) {
     return (
-      <section className="mt-12">
-        {heading}
-        <div className="mt-8 grid items-start gap-10 lg:grid-cols-[0.9fr_1fr] lg:gap-14">
-          <div>{visual}</div>
-          <div className="space-y-10">
-            {parts.map((_, index) => (
-              <div key={index}>{beatBody(index)}</div>
-            ))}
+      <section id="understand" className="mt-12 w-screen scroll-mt-8 [margin-inline:calc(50%-50vw)]">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+          {heading}
+          <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+            <div className="lg:sticky lg:top-8">{staticVisual}</div>
+            <div className="space-y-10">
+              {parts.map((_, index) => (
+                <div key={index}>{beatBody(index, hasAnatomy && !!parts[index].region)}</div>
+              ))}
+            </div>
           </div>
+          <p className="mt-8 max-w-prose text-xs leading-relaxed text-fg-mute">
+            {hasAnatomy ? UI.diagramCaption[lang] : UI.diagramNoAnatomy[lang]}
+          </p>
         </div>
-        <p className="mt-8 max-w-prose text-xs leading-relaxed text-fg-mute">
-          {hasAnatomy ? UI.diagramCaption[lang] : UI.diagramNoAnatomy[lang]}
-        </p>
       </section>
     );
   }
@@ -282,18 +427,44 @@ export function MechanismStage({
   return (
     <section
       ref={outerRef}
+      id="understand"
       style={{ height: `${parts.length * VH_PER_BEAT + 100}vh` }}
       /*
-        No border, no opaque panel, no full-bleed break-out. Those were what made
-        this read as a slide dropped into the page; the ambient field now runs
-        continuously underneath, so the stage can simply be part of the article.
+        Full-bleed, but with NO border and NO panel background. Width alone was
+        never what made this read as an inserted slide — the hard edges were.
+        The ambient field keeps running underneath, so breaking out of the
+        article column just gives the diagram room: it was capped near 340px
+        inside `max-w-3xl`, about a fifth of a 1440px screen.
       */
-      className="relative mt-12"
+      className="relative mt-12 w-screen [margin-inline:calc(50%-50vw)]"
     >
-      <div className="sticky top-0 flex min-h-dvh flex-col justify-center py-6 lg:py-10">
+      <div className="sticky top-0 flex min-h-dvh flex-col justify-center px-5 py-6 sm:px-8 lg:py-10">
+        <div className="mx-auto w-full max-w-7xl">
         {heading}
 
-        <div className="mt-6 grid items-center gap-5 lg:mt-8 lg:grid-cols-[0.9fr_1fr] lg:gap-14">
+        <div className="relative mt-6 grid items-center gap-5 lg:mt-8 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+          {/*
+            No viewBox, so one SVG user unit is one CSS pixel and the leader can
+            be written straight from `getBoundingClientRect()` results without a
+            coordinate conversion that would need re-deriving on every resize.
+          */}
+          <svg
+            ref={overlayRef}
+            className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              ref={connectorRef}
+              fill="none"
+              stroke="currentColor"
+              className="text-accent"
+              strokeWidth={1.5}
+              strokeDasharray="5 5"
+              style={{ opacity: 0 }}
+            />
+          </svg>
+
           <div ref={visualRef} style={{ willChange: 'transform' }}>
             {visual}
           </div>
@@ -302,16 +473,15 @@ export function MechanismStage({
             Every beat is rendered and stacked rather than swapped, which is what
             lets two of them be partly present at once and hand over mid-fade. A
             single swapped node can only ever cut.
-          */}
-          {/*
-            A grid stack, not absolute positioning. Every beat occupies the same
+
+            A grid stack, not absolute positioning: every beat occupies the same
             cell, so the container is exactly as tall as the LONGEST beat —
             automatically, with no reserved min-height to guess at. Absolute
             children contribute no height, so a long beat silently overflowed and
             sat on top of the pips; that is the kind of thing that only shows up
             on the narrowest screen, which is also the most common one.
           */}
-          <div className="grid">
+          <div ref={textColRef} className="grid">
             {parts.map((_, index) => (
               <div
                 key={index}
@@ -346,6 +516,7 @@ export function MechanismStage({
               style={{ opacity: index === 0 ? 1 : 0.3 }}
             />
           ))}
+        </div>
         </div>
       </div>
     </section>

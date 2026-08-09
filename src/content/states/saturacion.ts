@@ -7,6 +7,7 @@ export const saturacion: MentalState = {
   accent: 'teal',
   signature: 'layered',
   tile: 'feature',
+  band: 'difficult',
 
   label: { es: 'Saturación', en: 'Overwhelm' },
   blurb: {
@@ -54,6 +55,7 @@ export const saturacion: MentalState = {
         'The relief doesn\'t come from progress. It comes from freeing the memory.',
       ],
     },
+    analogy: 3,
     parts: [
       {
         name: { es: 'Memoria de trabajo', en: 'Working memory' },

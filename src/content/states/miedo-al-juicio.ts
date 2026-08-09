@@ -7,6 +7,7 @@ export const miedoAlJuicio: MentalState = {
   accent: 'cyan',
   signature: 'echo',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Miedo al juicio', en: 'Fear of judgement' },
   blurb: {

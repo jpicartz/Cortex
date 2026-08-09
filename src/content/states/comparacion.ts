@@ -7,6 +7,7 @@ export const comparacion: MentalState = {
   accent: 'fuchsia',
   signature: 'compare',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Comparación', en: 'Comparison' },
   blurb: {
@@ -54,6 +55,7 @@ export const comparacion: MentalState = {
         'Which is why convincing yourself not to compare doesn\'t work. Comparing is automatic. What you can change is what you compare against, and that changes the result without having to win a fight with yourself.',
       ],
     },
+    analogy: 5,
     parts: [
       {
         name: { es: 'Sistema de recompensa', en: 'Reward system' },

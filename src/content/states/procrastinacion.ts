@@ -7,6 +7,7 @@ export const procrastinacion: MentalState = {
   accent: 'amber',
   signature: 'stall',
   tile: 'standard',
+  band: 'difficult',
 
   label: { es: 'Procrastinación', en: 'Procrastination' },
   blurb: {
@@ -52,6 +53,7 @@ export const procrastinacion: MentalState = {
         "It is almost never the task that's hard. It's walking through the door.",
       ],
     },
+    analogy: 3,
     parts: [
       {
         name: { es: 'Sistema límbico', en: 'Limbic system' },
