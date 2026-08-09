@@ -57,6 +57,15 @@ function sample(signature: Signature, u: number, phase: number): number {
       return Math.sin(u * Math.PI * 5 + phase) * 1.8;
     case 'compare':
       return Math.sin(u * Math.PI * 7 + phase) * 4 - 5;
+    case 'rising':
+      // Amplitude and baseline both climb: not a spike, a trend.
+      return Math.sin(u * Math.PI * 7 + phase) * (2 + u * 8) - u * 6;
+    case 'steady':
+      // The only trace that does not decay or wobble. That is the point.
+      return Math.sin(u * Math.PI * 5 + phase) * 9;
+    case 'scan':
+      // A slow sweep with a fast probe riding it — looking, then finding.
+      return Math.sin(u * Math.PI * 2 + phase) * 10 + Math.sin(u * Math.PI * 17 + phase) * 2.5 * env;
     case 'echo':
       return u < 0.16
         ? Math.sin(u * Math.PI * 6.2 + phase) * 14

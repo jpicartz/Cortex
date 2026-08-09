@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { STATES, isLang, LANGS } from '@/content';
+import type { Lang, MentalState } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { TransitionLink } from '@/components/TransitionLink';
@@ -35,6 +36,9 @@ export async function generateMetadata({
 export default async function MenuPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
+
+  const difficult = STATES.filter((s) => s.band === 'difficult');
+  const good = STATES.filter((s) => s.band === 'good');
 
   return (
     <>
@@ -76,58 +80,90 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
           and rows cascade as you scroll. The old delay ran on its own clock,
           which made the last card feel late however fast you moved.
         */}
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          {STATES.map((state) => (
-            <li
-              key={state.id}
-              data-accent={state.accent}
-              className={state.tile === 'feature' ? 'lg:col-span-3' : 'lg:col-span-2'}
-            >
-              <TransitionLink
-                href={`/${lang}/${state.slug[lang]}`}
-                data-reveal="rise"
-                className="card-lift spotlight group flex h-full flex-col overflow-hidden rounded-card border border-edge bg-card p-4 hover:border-accent/60"
-                /*
-                  The whole card is the shared element, not just the icon. It
-                  pairs with the detail page's header block, which carries the
-                  same composition so the morph lands on a matching shape.
+        <StateGrid states={difficult} lang={lang} />
 
-                  Only ONE element may hold a given view-transition-name at a
-                  time, which is why the icon no longer has its own: a nested
-                  name is lifted out of its parent's snapshot and would leave an
-                  icon-shaped hole in the card mid-flight.
-                */
-                style={{ viewTransitionName: `card-${state.id}` }}
-              >
-                <span className="flex items-start gap-4">
-                  <span className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20">
-                    <StateIcon name={state.icon} className="size-6" />
-                  </span>
+        {/*
+          A divider, never an interleave. Someone opening this at 2am must not
+          scroll past a cheerful tile to reach the thing that helps, so the good
+          states live strictly below the ten and behind their own heading.
+        */}
+        <div className="mt-14 flex items-center gap-3 sm:mt-16">
+          <span aria-hidden="true" className="h-px w-6 bg-accent" />
+          <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">
+            {UI.menuGoodBand[lang]}
+          </h2>
+        </div>
+        <p className="mt-3 max-w-prose text-base leading-relaxed text-fg-soft">
+          {UI.menuGoodBandHelp[lang]}
+        </p>
 
-                  <span className="min-w-0">
-                    <span className="block font-display text-lg font-medium leading-snug text-fg">
-                      {state.label[lang]}
-                    </span>
-                    <span className="mt-1 block text-sm leading-relaxed text-fg-soft">
-                      {state.blurb[lang]}
-                    </span>
-                  </span>
-                </span>
-
-                {/*
-                  The state's own rhythm — erratic for anxiety, flat for
-                  no-motivation, looping for stuck-in-the-past. `mt-auto` pins it
-                  to the bottom so tiles of different heights still line up.
-                */}
-                <StateWave
-                  signature={state.signature}
-                  className="mt-auto h-8 w-full pt-4 text-accent opacity-45 transition-opacity duration-300 group-hover:opacity-80"
-                />
-              </TransitionLink>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-6">
+          <StateGrid states={good} lang={lang} />
+        </div>
       </div>
     </>
+  );
+}
+
+/**
+ * One band of the menu.
+ *
+ * A six-column track only fills if a row is two feature tiles (3+3) or three
+ * standard ones (2+2+2), so features must fall in adjacent PAIRS within a band.
+ * The `good` band is three standards, which is exactly one row.
+ */
+function StateGrid({ states, lang }: { states: readonly MentalState[]; lang: Lang }) {
+  return (
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      {states.map((state) => (
+        <li
+          key={state.id}
+          data-accent={state.accent}
+          className={state.tile === 'feature' ? 'lg:col-span-3' : 'lg:col-span-2'}
+        >
+          <TransitionLink
+            href={`/${lang}/${state.slug[lang]}`}
+            data-reveal="rise"
+            className="card-lift spotlight group flex h-full flex-col overflow-hidden rounded-card border border-edge bg-card p-4 hover:border-accent/60"
+            /*
+                    The whole card is the shared element, not just the icon. It
+                    pairs with the detail page's header block, which carries the
+                    same composition so the morph lands on a matching shape.
+
+                    Only ONE element may hold a given view-transition-name at a
+                    time, which is why the icon no longer has its own: a nested
+                    name is lifted out of its parent's snapshot and would leave an
+                    icon-shaped hole in the card mid-flight.
+                  */
+            style={{ viewTransitionName: `card-${state.id}` }}
+          >
+            <span className="flex items-start gap-4">
+              <span className="grid size-11 shrink-0 place-items-center rounded-tile bg-accent/12 text-accent-ink transition-colors duration-200 group-hover:bg-accent/20">
+                <StateIcon name={state.icon} className="size-6" />
+              </span>
+
+              <span className="min-w-0">
+                <span className="block font-display text-lg font-medium leading-snug text-fg">
+                  {state.label[lang]}
+                </span>
+                <span className="mt-1 block text-sm leading-relaxed text-fg-soft">
+                  {state.blurb[lang]}
+                </span>
+              </span>
+            </span>
+
+            {/*
+                    The state's own rhythm — erratic for anxiety, flat for
+                    no-motivation, looping for stuck-in-the-past. `mt-auto` pins it
+                    to the bottom so tiles of different heights still line up.
+                  */}
+            <StateWave
+              signature={state.signature}
+              className="mt-auto h-8 w-full pt-4 text-accent opacity-45 transition-opacity duration-300 group-hover:opacity-80"
+            />
+          </TransitionLink>
+        </li>
+      ))}
+    </ul>
   );
 }

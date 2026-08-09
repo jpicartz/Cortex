@@ -85,6 +85,9 @@ export const ICONS = [
   'eye',
   'moon',
   'timeline',
+  'trend-up',
+  'target',
+  'radar',
 ] as const;
 export type IconKey = (typeof ICONS)[number];
 
@@ -141,6 +144,12 @@ export const SIGNATURES = [
   'compare',
   /** A spike followed by smaller repeats of itself. */
   'echo',
+  /** Climbing, and still climbing. */
+  'rising',
+  /** Strong, even, unbroken. */
+  'steady',
+  /** Sweeping back and forth, looking. */
+  'scan',
 ] as const;
 export type Signature = (typeof SIGNATURES)[number];
 

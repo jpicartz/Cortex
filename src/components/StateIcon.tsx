@@ -1,9 +1,9 @@
 import type { IconKey } from '@/content/schema';
 
 /**
- * Ten hand-drawn icons instead of an icon library.
+ * Thirteen hand-drawn icons instead of an icon library.
  *
- * We need exactly ten glyphs. Pulling in a 5,000-icon package to get them
+ * We need exactly thirteen glyphs. Pulling in a 5,000-icon package to get them
  * would add install weight and a dependency for no benefit — this app's whole
  * promise is that it loads instantly when someone needs it. Keys are validated
  * against ICONS in content/schema.ts, so a typo is a build error.
@@ -83,6 +83,33 @@ const PATHS: Record<IconKey, React.ReactNode> = {
       <circle cx="18" cy="17.5" r="1.9" />
     </>
   ),
+  // I'm so back — a line trending up, with the step that started it
+  'trend-up': (
+    <>
+      <path d="M3 17.5 9 11l3.5 3.5L21 6" />
+      <path d="M15 6h6v6" />
+    </>
+  ),
+
+  // Locked in — concentric rings closing on a centre
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="0.6" />
+    </>
+  ),
+
+  // Training your radar — a sweep, and the thing it just found
+  radar: (
+    <>
+      <path d="M12 12 5.6 5.6" />
+      <path d="M3.5 12a8.5 8.5 0 1 1 8.5 8.5" />
+      <path d="M7.5 12a4.5 4.5 0 0 1 4.5-4.5" />
+      <circle cx="16.5" cy="15.5" r="1.4" />
+    </>
+  ),
+
 };
 
 export function StateIcon({

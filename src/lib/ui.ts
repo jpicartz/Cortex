@@ -63,6 +63,20 @@ export const UI = {
     en: 'There is no region to point at here — what is involved are processes, not places in the brain.',
   },
 
+  /**
+   * The divider above the positive states.
+   *
+   * Phrased as a condition rather than an invitation ("or things are actually
+   * good" rather than "feeling great?") so that someone scrolling past it in a
+   * bad moment is not being cheerfully addressed by a page they came to for
+   * help.
+   */
+  menuGoodBand: { es: 'O las cosas van bien', en: 'Or things are actually good' },
+  menuGoodBandHelp: {
+    es: 'Entender un buen estado también sirve: es más fácil volver a algo cuando sabes cómo llegaste.',
+    en: 'Understanding a good state is useful too — it is easier to get back to something when you know how you got there.',
+  },
+
   // ── The fast path ───────────────────────────────────────────────────────
   /**
    * Shown above everything else on a state page.

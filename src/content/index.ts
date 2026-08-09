@@ -17,6 +17,10 @@ import { futuro } from './states/futuro';
  * likely to open in acute distress come first, so the thing they need is
  * reachable without scrolling on a phone.
  */
+import { racha } from './states/racha';
+import { enfoque } from './states/enfoque';
+import { radar } from './states/radar';
+
 const RAW = [
   ansiedad,
   saturacion,
@@ -28,6 +32,14 @@ const RAW = [
   desmotivacion,
   comparacion,
   miedoAlJuicio,
+
+  /*
+    The `good` band, rendered below a divider on the menu and never mixed in.
+    Order here is still document order; the menu splits on `band`, not position.
+  */
+  racha,
+  enfoque,
+  radar,
 ];
 
 /**
