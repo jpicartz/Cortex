@@ -5,6 +5,7 @@ import { STATES, isLang, LANGS } from '@/content';
 import type { Lang, MentalState } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
+import { SectionHeading } from '@/components/SectionHeading';
 import { TransitionLink } from '@/components/TransitionLink';
 import { Hero } from '@/components/Hero';
 import { CajalField } from '@/components/brain/CajalField';
@@ -87,11 +88,8 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
           scroll past a cheerful tile to reach the thing that helps, so the good
           states live strictly below the ten and behind their own heading.
         */}
-        <div className="mt-14 flex items-center gap-3 sm:mt-16">
-          <span aria-hidden="true" className="h-px w-6 bg-accent" />
-          <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">
-            {UI.menuGoodBand[lang]}
-          </h2>
+        <div className="mt-14 sm:mt-16">
+          <SectionHeading>{UI.menuGoodBand[lang]}</SectionHeading>
         </div>
         <p className="mt-3 max-w-prose text-base leading-relaxed text-fg-soft">
           {UI.menuGoodBandHelp[lang]}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useCallback, useState } from 'react';
+
 import type { Lang, Technique } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { BreathPacer } from './tools/BreathPacer';
@@ -30,6 +32,17 @@ export function TechniqueCard({
   const steps = technique.steps[lang];
   const tool = technique.tool;
 
+  const [complete, setComplete] = useState(false);
+  /*
+    Stable identity matters here. `StepChecklist` reports progress from an
+    effect keyed on this callback, so an inline arrow would give it a new
+    dependency every render — which would re-fire the effect, set state, render
+    again, and loop forever.
+  */
+  const handleProgress = useCallback((doneCount: number, total: number) => {
+    setComplete(total > 0 && doneCount === total);
+  }, []);
+
   // For checklist techniques the steps themselves become the interaction,
   // so rendering both a plain list and a checklist would just duplicate them.
   const stepsAreTheTool = tool?.kind === 'checklist';
@@ -57,7 +70,7 @@ export function TechniqueCard({
         nowhere to put your place when you look up mid-exercise.
       */}
       <div className="mt-3">
-        <StepChecklist steps={steps} lang={lang} />
+        <StepChecklist steps={steps} lang={lang} onProgress={handleProgress} />
       </div>
     </div>
   );
@@ -88,8 +101,12 @@ export function TechniqueCard({
     rule above survives untouched — and on mobile, where this collapses to one
     column, the reading order is automatically the right one.
   */
+  /*
+    The same accent rule the analogy wears in the mechanism section, so the two
+    halves of the page share a language instead of one looking newer.
+  */
   const whyBlock = (
-    <p className="max-w-prose text-[0.9375rem] leading-relaxed text-fg-soft">
+    <p className="max-w-prose border-l-2 border-accent py-0.5 pl-4 text-[0.9375rem] leading-relaxed text-fg-soft">
       <span className="font-semibold text-fg">{UI.whyItWorks[lang]}: </span>
       {technique.why[lang]}
     </p>
@@ -114,17 +131,40 @@ export function TechniqueCard({
   ) : (
     <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.7fr] lg:gap-8">
       {stepsBlock}
-      <aside className="border-l-0 lg:border-l lg:border-edge lg:pl-6">{whyBlock}</aside>
+      <aside>{whyBlock}</aside>
     </div>
   );
 
   return (
+    /*
+      ── Two states, and neither is a hover. ──────────────────────────────────
+
+      `focus-within`, deliberately, not `card-lift`. The menu cards lift because
+      they are links, and the lift is a promise that clicking does something. A
+      technique card is a container you work INSIDE — it is not a target — so a
+      hover lift here would be a false affordance. Instead the card responds when
+      you are genuinely using it, driven by whichever checkbox or control you
+      touched.
+
+      Completion tints the card in its own ACCENT rather than a green. There is
+      no success token in this palette, and adding one means a new colour pair
+      swept across ten hues in two themes; a per-state accent brightening is also
+      more coherent than a green that belongs to no state.
+    */
     <section
-      className={
-        prominent
-          ? 'rounded-card border border-accent/40 bg-accent/[0.06] p-5 sm:p-6'
-          : 'rounded-card border border-edge bg-card p-5'
-      }
+      className={`rounded-card border p-5 transition-colors duration-300 ${
+        prominent ? 'sm:p-6' : ''
+      } ${
+        complete
+          ? // `accent-fill`, not `accent`: the completed border is a state
+            // indicator, and against its own tinted surface plain accent tops
+            // out at 2.76:1 even fully opaque — under the 3:1 that non-text UI
+            // needs. The fill token measures 4.38:1 at the worst of ten hues.
+            'border-accent-fill bg-accent/[0.09]'
+          : prominent
+            ? 'border-accent/40 bg-accent/[0.06] focus-within:border-accent/70'
+            : 'border-edge bg-card focus-within:border-accent/50'
+      }`}
     >
       {prominent && (
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">
@@ -155,6 +195,31 @@ export function TechniqueCard({
       {toolBlock && <div className="mt-2.5">{whyBlock}</div>}
 
       {body}
+
+      {/*
+        The one confirmation on the site, and so the one place the spring lives.
+        Calm ease-out carries everything explanatory; overshoot is reserved for
+        "you just did a thing", which until now nothing on this page was.
+      */}
+      {complete && (
+        <p className="mt-5 flex items-center gap-2.5 text-[0.9375rem] leading-relaxed text-fg">
+          <span
+            aria-hidden="true"
+            className="animate-pop grid size-6 shrink-0 place-items-center rounded-full bg-accent-fill text-on-accent"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="size-3.5">
+              <path
+                d="M4 12.5 9.5 18 20 6.5"
+                stroke="currentColor"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+          {UI.breathFinished[lang]}
+        </p>
+      )}
     </section>
   );
 }

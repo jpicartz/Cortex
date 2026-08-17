@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Lang, MentalState, Signature } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { SectionHeading } from '../SectionHeading';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import { clamp01, smoothstep } from '@/lib/scrollDriver';
 import { WAVE_BOX, wavePaths } from '../wave';
@@ -315,12 +316,7 @@ export function MechanismStage({
 
   const heading = (
     <>
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-6 bg-accent" />
-        <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">
-          {UI.sectionUnderstand[lang]}
-        </h2>
-      </div>
+      <SectionHeading>{UI.sectionUnderstand[lang]}</SectionHeading>
       <h3 className="mt-3 font-display text-2xl leading-snug tracking-tight text-fg sm:text-3xl">
         {headline[lang]}
       </h3>

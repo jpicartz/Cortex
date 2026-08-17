@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { allStateParams, getStateBySlug, isLang } from '@/content';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
+import { SectionHeading } from '@/components/SectionHeading';
 import { StateWave } from '@/components/StateWave';
 import { TransitionLink } from '@/components/TransitionLink';
 import { TechniqueCard } from '@/components/TechniqueCard';
@@ -166,9 +167,7 @@ export default async function StatePage({
 
       {/* ── FEEL: recognition before explanation. ───────────────────────── */}
       <section id="feel" className="mt-10 scroll-mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
-          {UI.sectionFeel[lang]}
-        </h2>
+        <SectionHeading>{UI.sectionFeel[lang]}</SectionHeading>
         <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
           {state.feel[lang].map((line) => (
             <li
@@ -200,9 +199,7 @@ export default async function StatePage({
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}
       <section id="fix" className="mt-12 scroll-mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
-          {UI.sectionFix[lang]}
-        </h2>
+        <SectionHeading>{UI.sectionFix[lang]}</SectionHeading>
         <div className="mt-4 space-y-4">
           {state.techniques.map((technique) => (
             <div key={technique.id} data-reveal="rise">
@@ -219,9 +216,7 @@ export default async function StatePage({
 
       {/* ── SOURCES: the line between this and a wellness blog. ─────────── */}
       <section id="sources" className="mt-12 scroll-mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-mute">
-          {UI.sectionSources[lang]}
-        </h2>
+        <SectionHeading>{UI.sectionSources[lang]}</SectionHeading>
         <ul className="mt-4 grid gap-x-8 gap-y-2 sm:grid-cols-2">
           {state.sources.map((source) => (
             <li key={source.url} data-reveal="fade">
