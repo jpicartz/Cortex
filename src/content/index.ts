@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { mentalStateSchema, type Lang, type MentalState } from './schema';
+import { triageTreeSchema, mentalStateSchema, type Lang, type MentalState } from './schema';
 
 import { ansiedad } from './states/ansiedad';
 import { procrastinacion } from './states/procrastinacion';
@@ -20,6 +20,7 @@ import { futuro } from './states/futuro';
 import { racha } from './states/racha';
 import { enfoque } from './states/enfoque';
 import { radar } from './states/radar';
+import { triage } from './triage';
 
 const RAW = [
   ansiedad,
@@ -79,6 +80,42 @@ export const STATES: readonly MentalState[] = (() => {
   }
 
   return states;
+})();
+
+/**
+ * The triage tree, parsed and cross-checked against the states above.
+ *
+ * Two failures are possible and both are caught here rather than at runtime: an
+ * answer resolving to a state id that does not exist, and a state that no branch
+ * can reach. The first would dead-end someone mid-flow; the second means a page
+ * exists that the fastest route into the app can never offer, which is a content
+ * bug even though nothing errors.
+ */
+export const TRIAGE = (() => {
+  const parsed = triageTreeSchema.safeParse(triage);
+  if (!parsed.success) {
+    throw new Error(`Invalid triage tree:\n${z.prettifyError(parsed.error)}`);
+  }
+
+  const ids = new Set(STATES.map((s) => s.id));
+  const reached = new Set<string>();
+
+  for (const [key, question] of Object.entries(parsed.data.questions)) {
+    for (const answer of question.answers) {
+      if (!answer.state) continue;
+      if (!ids.has(answer.state)) {
+        throw new Error(`Triage question "${key}" resolves to unknown state "${answer.state}"`);
+      }
+      reached.add(answer.state);
+    }
+  }
+
+  const unreachable = STATES.filter((s) => !reached.has(s.id)).map((s) => s.id);
+  if (unreachable.length > 0) {
+    throw new Error(`States unreachable from triage: ${unreachable.join(', ')}`);
+  }
+
+  return parsed.data;
 })();
 
 /** Resolve a localised URL segment back to its state. */

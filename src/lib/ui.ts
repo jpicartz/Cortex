@@ -77,6 +77,35 @@ export const UI = {
     en: 'Understanding a good state is useful too — it is easier to get back to something when you know how you got there.',
   },
 
+  // ── Triage ──────────────────────────────────────────────────────────────
+  triageEyebrow: { es: 'Ahora mismo', en: 'Right now' },
+  /**
+   * Explicit permission to answer loosely. The questions ask where a feeling
+   * sits, not what it is called, and someone who is not sure needs telling that
+   * an imprecise answer is fine — otherwise the flow becomes one more thing to
+   * get right.
+   */
+  triageHelp: {
+    es: 'No hay respuesta incorrecta. Puedes cambiarla después.',
+    en: 'There is no wrong answer. You can change it after.',
+  },
+  triageBack: { es: '← Antes', en: '← Back' },
+  triageResult: { es: 'Lo más parecido', en: 'Closest match' },
+  /**
+   * The honesty line, and the most carefully weighed sentence in the app.
+   *
+   * Cortex's own disclaimer says it does not diagnose. Naming someone's state in
+   * two taps is precisely where that promise gets tested, so this says plainly
+   * that it is a nearest match out of thirteen and that being wrong is expected
+   * and cheap to correct.
+   */
+  triageDisclaimer: {
+    es: 'Esto no es un diagnóstico: es lo más cercano de trece. Si no le atina, elige otra y ya.',
+    en: 'This is not a diagnosis — it is the nearest of thirteen. If it is not right, just pick another.',
+  },
+  triageGo: { es: 'Llévame ahí', en: 'Take me there' },
+  triageNotIt: { es: 'No es eso', en: 'That is not it' },
+
   // ── The fast path ───────────────────────────────────────────────────────
   /**
    * Shown above everything else on a state page.

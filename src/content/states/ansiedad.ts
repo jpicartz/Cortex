@@ -135,12 +135,48 @@ export const ansiedad: MentalState = {
         ],
       },
     },
+    {
+      id: 'nombrar-lo-que-sientes',
+      name: { es: 'Ponle nombre', en: 'Name it' },
+      why: {
+        es: 'Pasar de sentir la emoción a nombrarla con palabras precisas baja la actividad de la amígdala. No es reprimir: es que nombrar con precisión ya la baja de intensidad.',
+        en: 'Moving from feeling the emotion to naming it in precise words lowers amygdala activity. This is not suppression — naming it precisely already turns the volume down.',
+      },
+      durationHint: { es: '3 minutos', en: '3 minutes' },
+      tool: {
+        kind: 'braindump',
+        prompt: {
+          es: '¿Qué es exactamente? Ponle la palabra más precisa que encuentres, no la más grande.',
+          en: 'What is it exactly? Use the most precise word you can find, not the biggest one.',
+        },
+      },
+      steps: {
+        es: [
+          'Escribe qué estás sintiendo, pero busca la palabra exacta.',
+          '"Ansiedad" es un cajón. ¿Es miedo, vergüenza, presión, culpa, anticipación?',
+          'Ahora agrega dónde lo sientes en el cuerpo y qué tan fuerte del 0 al 10.',
+          'No trates de que se vaya. Solo descríbelo bien. Eso es todo el ejercicio.',
+        ],
+        en: [
+          'Write what you are feeling, but hunt for the exact word.',
+          '"Anxiety" is a drawer. Is it fear, shame, pressure, guilt, dread?',
+          'Now add where you feel it in your body and how strong it is from 0 to 10.',
+          'Do not try to make it go away. Just describe it accurately. That is the whole exercise.',
+        ],
+      },
+    },
   ],
 
   sources: [
     {
-      label: 'Huberman Lab — Reduce Anxiety & Stress with the Physiological Sigh',
-      url: 'https://www.hubermanlab.com/episode/reduce-anxiety-stress-with-the-physiological-sigh',
+      label:
+        'Lieberman et al. (2007), Psychological Science — Putting feelings into words: affect labelling disrupts amygdala activity',
+      url: 'https://journals.sagepub.com/doi/10.1111/j.1467-9280.2007.01916.x',
+    },
+    {
+      label:
+        'Huberman Lab — Breathwork Protocols for Health, Focus & Stress (the physiological sigh)',
+      url: 'https://www.hubermanlab.com/newsletter/breathwork-protocols-for-health-focus-stress',
     },
     {
       label: 'Balban et al. (2023), Cell Reports Medicine — Brief structured respiration practices',

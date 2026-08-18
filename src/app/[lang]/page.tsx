@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { STATES, isLang, LANGS } from '@/content';
+import { STATES, TRIAGE, isLang, LANGS } from '@/content';
 import type { Lang, MentalState } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { SectionHeading } from '@/components/SectionHeading';
+import { Triage } from '@/components/Triage';
 import { TransitionLink } from '@/components/TransitionLink';
 import { Hero } from '@/components/Hero';
 import { CajalField } from '@/components/brain/CajalField';
@@ -50,6 +51,15 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
         {/* Mirrored to the opposite margin from the detail pages, so moving
             between the two does not feel like the same sticker twice. */}
         <CajalField side="left" />
+
+        {/*
+          The way in, above the grid rather than instead of it. Someone who
+          already knows what they want scrolls past; someone who does not is no
+          longer asked to diagnose themselves before the app will help.
+        */}
+        <div className="mb-10 sm:mb-14">
+          <Triage tree={TRIAGE} states={STATES} lang={lang} />
+        </div>
 
         <header className="mb-8 sm:mb-10">
           {/* h2, not h1 — the hero line owns the page's only h1. */}

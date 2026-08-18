@@ -309,3 +309,51 @@ export const mentalStateSchema = z.object({
 });
 
 export type MentalState = z.infer<typeof mentalStateSchema>;
+
+/**
+ * The triage tree: two taps from "I feel bad" to a state page.
+ *
+ * An answer either descends (`next`) or resolves (`state`) — never both and
+ * never neither, which the refine below enforces. The referenced ids are checked
+ * against the parsed states in `content/index.ts`, because a typo here would
+ * dead-end someone who is already having a bad night, and it should fail the
+ * build instead.
+ */
+const triageAnswerSchema = z
+  .object({
+    label: bi,
+    /** Optional second line; useful where the label alone is ambiguous. */
+    hint: bi.optional(),
+    /** Descend to another question. */
+    next: z.string().min(1).optional(),
+    /** Or resolve to a state id. */
+    state: id.optional(),
+  })
+  .refine((a) => Boolean(a.next) !== Boolean(a.state), {
+    message: 'a triage answer must either descend (next) or resolve (state), not both or neither',
+  });
+
+export const triageTreeSchema = z
+  .object({
+    root: z.string().min(1),
+    questions: z.record(
+      z.string().min(1),
+      z.object({
+        prompt: bi,
+        answers: z.array(triageAnswerSchema).min(2).max(4),
+      }),
+    ),
+  })
+  .refine((t) => Boolean(t.questions[t.root]), {
+    message: 'triage.root does not name a question',
+    path: ['root'],
+  })
+  .refine(
+    (t) =>
+      Object.values(t.questions).every((q) =>
+        q.answers.every((a) => !a.next || Boolean(t.questions[a.next])),
+      ),
+    { message: 'a triage answer descends to a question that does not exist' },
+  );
+
+export type TriageTree = z.infer<typeof triageTreeSchema>;
