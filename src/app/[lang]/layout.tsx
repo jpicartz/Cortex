@@ -10,6 +10,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveals } from '@/components/Reveals';
 import { Spotlight } from '@/components/Spotlight';
+import { SkipLink } from '@/components/SkipLink';
 
 /**
  * This is the ROOT layout. There is deliberately no `app/layout.tsx`: every
@@ -116,10 +117,11 @@ export default async function RootLayout({
         <meta name="theme-color" content="#0d1120" media="(prefers-color-scheme: dark)" />
       </head>
       <body className="font-sans min-h-dvh flex flex-col bg-page text-fg">
+        <SkipLink lang={lang} />
         <Reveals />
         <Spotlight />
         <SiteHeader lang={lang} />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">{children}</main>
         <SiteFooter lang={lang} />
       </body>
     </html>

@@ -77,6 +77,8 @@ export const UI = {
     en: 'Understanding a good state is useful too — it is easier to get back to something when you know how you got there.',
   },
 
+  skipToContent: { es: 'Saltar al contenido', en: 'Skip to content' },
+
   // ── Triage ──────────────────────────────────────────────────────────────
   triageEyebrow: { es: 'Ahora mismo', en: 'Right now' },
   /**

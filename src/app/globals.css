@@ -240,6 +240,30 @@
   }
 
   /*
+    ── Skip link ────────────────────────────────────────────────────────────
+
+    Parked above the viewport, slid into place on focus.
+
+    Written here rather than as utilities because two Tailwind attempts lost the
+    cascade: `sr-only` has its `padding: 0` overridden by `px-4` at equal
+    specificity and keeps its `clip-path` through focus, and `focus:translate-y-0`
+    does not beat `-translate-y-20` — verified with an isolated probe. Both
+    failures are silent: the link is present, focusable, announced, and goes
+    nowhere visible. One rule with an explicit `:focus` has nothing to lose.
+  */
+  .skip-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    transform: translateY(-6rem);
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  /*
     Cursor spotlight. Coordinates come from a rAF-throttled listener that only
     attaches for a fine pointer, so touch devices never run it and never pay for
     it — and the fallback centre keeps the surface sane if they somehow do.

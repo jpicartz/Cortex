@@ -63,11 +63,39 @@ export default async function StatePage({
 
   const { mechanism } = state;
 
+  /*
+    Structured data, and deliberately thin.
+
+    Only fields backed by real data: no `author` (there is no named one), no
+    `datePublished` (we do not track it), no ratings. The citation list is the
+    part worth exposing and the one thing this site has that a wellness blog
+    does not — so it is built from the same `sources` the page renders visibly,
+    which means the two cannot drift.
+  */
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: state.seo.title[lang],
+    description: state.seo.description[lang],
+    inLanguage: lang,
+    isAccessibleForFree: true,
+    citation: state.sources.map((source) => ({
+      '@type': 'CreativeWork',
+      name: source.label,
+      url: source.url,
+    })),
+  };
+
   return (
     <article
       data-accent={state.accent}
       className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10 min-[1440px]:max-w-4xl"
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/*
         Mounted inside the accented wrapper, not the layout, so both fields
         inherit this state's --hue for free.
@@ -162,6 +190,14 @@ export default async function StatePage({
         someone who will not scroll, the list is for someone reading through.
       */}
       <section id="start" className="mt-6 scroll-mt-8">
+        {/*
+          A real h2, visually hidden. The card's own title is an h3, and without
+          a section heading above it a screen-reader user met a subheading with
+          no section — an h1 → h3 jump. The card already announces itself
+          visually with the "Start here" eyebrow, so showing this twice would be
+          noise; omitting it from the accessibility tree would be the bug.
+        */}
+        <h2 className="sr-only">{UI.startHere[lang]}</h2>
         <TechniqueCard technique={state.techniques[0]} lang={lang} prominent />
       </section>
 
