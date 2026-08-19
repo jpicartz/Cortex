@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { allStateParams, getStateBySlug, isLang, relatedStates } from '@/content';
+import { allStateParams, getPageBySlug, getStateBySlug, isLang, relatedStates } from '@/content';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { SectionHeading } from '@/components/SectionHeading';
@@ -14,8 +14,9 @@ import { CajalField } from '@/components/brain/CajalField';
 import { AmbientField } from '@/components/AmbientField';
 import { SectionRail } from '@/components/SectionRail';
 import { RelatedStates } from '@/components/RelatedStates';
+import { ProsePage } from '@/components/ProsePage';
 
-/** All 20 pages (10 states × 2 languages) are generated at build time. */
+/** Every state and prose page, in both languages, generated at build time. */
 export function generateStaticParams() {
   return allStateParams();
 }
@@ -27,6 +28,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLang(lang)) return {};
+
+  const page = getPageBySlug(lang, slug);
+  if (page) {
+    return {
+      title: page.seo.title[lang],
+      description: page.seo.description[lang],
+      alternates: {
+        canonical: `/${lang}/${page.slug[lang]}`,
+        languages: {
+          es: `/es/${page.slug.es}`,
+          en: `/en/${page.slug.en}`,
+          'x-default': `/es/${page.slug.es}`,
+        },
+      },
+    };
+  }
 
   const state = getStateBySlug(lang, slug);
   if (!state) return {};
@@ -58,6 +75,15 @@ export default async function StatePage({
 }) {
   const { lang, slug } = await params;
   if (!isLang(lang)) notFound();
+
+  /*
+    Prose pages share this route with the states. Checked FIRST: the slug
+    namespace is validated as disjoint at build time, so the order cannot
+    shadow anything — but checking pages first keeps the cheap lookup ahead of
+    the one that then does real work.
+  */
+  const page = getPageBySlug(lang, slug);
+  if (page) return <ProsePage page={page} lang={lang} />;
 
   const state = getStateBySlug(lang, slug);
   if (!state) notFound();

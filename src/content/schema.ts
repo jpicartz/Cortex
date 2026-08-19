@@ -370,3 +370,34 @@ export const triageTreeSchema = z
   );
 
 export type TriageTree = z.infer<typeof triageTreeSchema>;
+
+/**
+ * A prose page that is not a mental state.
+ *
+ * Deliberately much thinner than `mentalStateSchema`: no diagram, no tools, no
+ * triage entry. There is exactly one of these today — the thesis every
+ * technique on the site rests on and which nothing said out loud — and the
+ * schema is kept small so it stays cheap rather than growing into a CMS.
+ *
+ * Slugs share a namespace with state slugs and are checked against them in
+ * `content/index.ts`, because both resolve through the same `[slug]` route and
+ * a collision would silently shadow one of them.
+ */
+export const staticPageSchema = z.object({
+  id,
+  slug: z.object({ es: slug, en: slug }),
+  label: bi,
+  lede: bi,
+  sections: z
+    .array(
+      z.object({
+        heading: bi,
+        body: biList,
+      }),
+    )
+    .min(1),
+  sources: z.array(z.object({ label: z.string().min(1), url: z.url() })).min(1),
+  seo: z.object({ title: bi, description: bi }),
+});
+
+export type StaticPage = z.infer<typeof staticPageSchema>;

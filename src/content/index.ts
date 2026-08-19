@@ -2,9 +2,11 @@ import { z } from 'zod';
 import {
   triageTreeSchema,
   mentalStateSchema,
+  staticPageSchema,
   type Lang,
   type MentalState,
   type Region,
+  type StaticPage,
 } from './schema';
 
 import { ansiedad } from './states/ansiedad';
@@ -29,6 +31,7 @@ import { radar } from './states/radar';
 import { aguante } from './states/aguante';
 import { triage } from './triage';
 import { REGION_INFO } from './regions';
+import { PAGES_RAW } from './pages';
 
 const RAW = [
   ansiedad,
@@ -203,10 +206,47 @@ export function getStateById(id: string): MentalState | undefined {
 
 /** Every (lang, slug) pair — drives `generateStaticParams`. */
 export function allStateParams(): { lang: Lang; slug: string }[] {
-  return STATES.flatMap((s) => [
+  return [...STATES, ...PAGES].flatMap((s) => [
     { lang: 'es' as const, slug: s.slug.es },
     { lang: 'en' as const, slug: s.slug.en },
   ]);
+}
+
+/**
+ * Prose pages, sharing the `[slug]` route with the states.
+ *
+ * Parsed here rather than in `pages.ts` for the same reason the states are: a
+ * malformed page should fail `next build`. The slug check is the load-bearing
+ * part — states and pages resolve through one route, so a collision would let
+ * one silently shadow the other, and `getStateBySlug` runs first.
+ */
+export const PAGES: readonly StaticPage[] = (() => {
+  const pages = PAGES_RAW.map((p) => staticPageSchema.parse(p));
+
+  const taken = new Set<string>();
+  for (const state of STATES) {
+    taken.add(`es:${state.slug.es}`);
+    taken.add(`en:${state.slug.en}`);
+  }
+  // The atlas is a literal route segment, so it is spoken for too.
+  taken.add('es:atlas');
+  taken.add('en:atlas');
+
+  for (const page of pages) {
+    for (const lang of ['es', 'en'] as const) {
+      const key = `${lang}:${page.slug[lang]}`;
+      if (taken.has(key)) {
+        throw new Error(`Page slug "${page.slug[lang]}" (${page.id}) collides with an existing ${lang} route`);
+      }
+      taken.add(key);
+    }
+  }
+
+  return pages;
+})();
+
+export function getPageBySlug(lang: Lang, slug: string): StaticPage | undefined {
+  return PAGES.find((p) => p.slug[lang] === slug);
 }
 
 export * from './schema';

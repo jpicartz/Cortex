@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { STATES } from './index';
+import { PAGES, STATES } from './index';
 
 /**
  * Fetches every citation and fails on anything that does not resolve.
@@ -37,8 +37,14 @@ const BOT_BLOCKED = new Set([
   'pubsonline.informs.org',
 ]);
 
-const sources = STATES.flatMap((state) =>
-  state.sources.map((source) => ({ state: state.id, ...source })),
+/*
+  States AND prose pages. The page type was added with two citations and the
+  count here did not move, which is exactly the silent gap this file exists to
+  close — anything carrying a `sources` array has to be walked, not just the
+  content type that happened to exist when the check was written.
+*/
+const sources = [...STATES, ...PAGES].flatMap((item) =>
+  item.sources.map((source) => ({ owner: item.id, ...source })),
 );
 
 describe('citations resolve', () => {
@@ -51,7 +57,7 @@ describe('citations resolve', () => {
     expect(skipped).toBeLessThan(sources.length / 2);
   });
 
-  it.each(checked.map((s) => [`${s.state} · ${s.url}`, s.url] as const))(
+  it.each(checked.map((s) => [`${s.owner} · ${s.url}`, s.url] as const))(
     'resolves %s',
     async (_label, url) => {
       const response = await fetch(url, {

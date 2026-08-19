@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { STATES } from './index';
+import { PAGES, STATES } from './index';
 
 /**
  * The fast, offline half of source integrity.
@@ -16,13 +16,14 @@ import { STATES } from './index';
  * has nothing to do with citations.
  */
 describe('citation sources', () => {
-  const all = STATES.flatMap((state) =>
-    state.sources.map((source) => ({ state: state.id, ...source })),
+  // Prose pages carry citations too, and were invisible here until they did.
+  const all = [...STATES, ...PAGES].flatMap((item) =>
+    item.sources.map((source) => ({ state: item.id, ...source })),
   );
 
-  it('every state cites at least two sources', () => {
-    for (const state of STATES) {
-      expect(state.sources.length, `${state.id} has too few sources`).toBeGreaterThanOrEqual(2);
+  it('every state and page cites at least two sources', () => {
+    for (const item of [...STATES, ...PAGES]) {
+      expect(item.sources.length, `${item.id} has too few sources`).toBeGreaterThanOrEqual(2);
     }
   });
 
