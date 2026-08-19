@@ -115,6 +115,15 @@ export const REGIONS = [
 export type Region = (typeof REGIONS)[number];
 
 /**
+ * A region described on its own terms, for the atlas.
+ *
+ * Separate from the `role` inside a state's `parts`, which is written to serve
+ * that state's argument. Both are correct; they answer different questions.
+ */
+export const regionInfoSchema = z.object({ name: bi, role: bi });
+export type RegionInfo = z.infer<typeof regionInfoSchema>;
+
+/**
  * The waveform each state carries — a visual signature, not decoration.
  *
  * The shape says something true about the state: anxiety is fast and erratic,

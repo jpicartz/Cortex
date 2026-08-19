@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { allStateParams, getStateBySlug, isLang } from '@/content';
+import { allStateParams, getStateBySlug, isLang, relatedStates } from '@/content';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
 import { SectionHeading } from '@/components/SectionHeading';
@@ -13,6 +13,7 @@ import { MechanismStage } from '@/components/brain/MechanismStage';
 import { CajalField } from '@/components/brain/CajalField';
 import { AmbientField } from '@/components/AmbientField';
 import { SectionRail } from '@/components/SectionRail';
+import { RelatedStates } from '@/components/RelatedStates';
 
 /** All 20 pages (10 states × 2 languages) are generated at build time. */
 export function generateStaticParams() {
@@ -249,6 +250,14 @@ export default async function StatePage({
       <section className="mt-12">
         <Coach lang={lang} stateId={state.id} />
       </section>
+
+      {/*
+        The graph, made visible. Renders on every page, including the four
+        anatomical islands — those say plainly that nothing shares their parts
+        rather than quietly vanishing, and every page keeps its door to the
+        atlas.
+      */}
+      <RelatedStates state={state} related={relatedStates(state)} lang={lang} />
 
       {/* ── SOURCES: the line between this and a wellness blog. ─────────── */}
       <section id="sources" className="mt-12 scroll-mt-8">

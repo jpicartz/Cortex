@@ -108,6 +108,17 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
         <div className="mt-6">
           <StateGrid states={good} lang={lang} />
         </div>
+
+        {/*
+          The atlas sits at the foot of the menu, not the top. It is the
+          curious-visitor door, and someone arriving in distress should reach
+          thirteen states before an invitation to go exploring.
+        */}
+        <div className="mt-14 flex justify-center sm:mt-16">
+          <TransitionLink href={`/${lang}/atlas`} className="btn-quiet">
+            {UI.atlasLink[lang]}
+          </TransitionLink>
+        </div>
       </div>
     </>
   );

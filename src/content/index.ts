@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { triageTreeSchema, mentalStateSchema, type Lang, type MentalState } from './schema';
+import {
+  triageTreeSchema,
+  mentalStateSchema,
+  type Lang,
+  type MentalState,
+  type Region,
+} from './schema';
 
 import { ansiedad } from './states/ansiedad';
 import { procrastinacion } from './states/procrastinacion';
@@ -21,6 +27,7 @@ import { racha } from './states/racha';
 import { enfoque } from './states/enfoque';
 import { radar } from './states/radar';
 import { triage } from './triage';
+import { REGION_INFO } from './regions';
 
 const RAW = [
   ansiedad,
@@ -117,6 +124,71 @@ export const TRIAGE = (() => {
 
   return parsed.data;
 })();
+
+/**
+ * Which states involve each brain region.
+ *
+ * This graph already existed implicitly — every state names the parts it
+ * involves — but nothing surfaced it, so a state page was a dead end and
+ * noticing that focus and overwhelm share the dlPFC was impossible.
+ *
+ * Derived rather than authored, so it cannot fall out of step with the states
+ * themselves. Validated both ways: every region used must have a description,
+ * and every described region must be used by something — an atlas entry nothing
+ * links to is a page with a dead end on it.
+ */
+export const REGION_INDEX: ReadonlyMap<Region, readonly MentalState[]> = (() => {
+  const index = new Map<Region, MentalState[]>();
+
+  for (const state of STATES) {
+    for (const part of state.mechanism.parts) {
+      if (!part.region) continue;
+      const list = index.get(part.region) ?? [];
+      if (!list.includes(state)) list.push(state);
+      index.set(part.region, list);
+    }
+  }
+
+  for (const region of index.keys()) {
+    if (!REGION_INFO[region]) {
+      throw new Error(`Region "${region}" is used by a state but has no entry in regions.ts`);
+    }
+  }
+  for (const region of Object.keys(REGION_INFO)) {
+    if (!index.has(region as Region)) {
+      throw new Error(`Region "${region}" is described in regions.ts but no state uses it`);
+    }
+  }
+
+  return index;
+})();
+
+/**
+ * Other states that share a brain region with this one.
+ *
+ * Ordered by how much they share, then capped — three links is a doorway, ten is
+ * a sitemap. States built entirely from processes rather than places (worry has
+ * no anatomical parts at all) correctly return nothing, and the caller must
+ * render no block rather than an empty heading.
+ */
+export function relatedStates(state: MentalState, limit = 3): { state: MentalState; via: Region }[] {
+  const shared = new Map<string, { state: MentalState; via: Region; count: number }>();
+
+  for (const part of state.mechanism.parts) {
+    if (!part.region) continue;
+    for (const other of REGION_INDEX.get(part.region) ?? []) {
+      if (other.id === state.id) continue;
+      const existing = shared.get(other.id);
+      if (existing) existing.count += 1;
+      else shared.set(other.id, { state: other, via: part.region, count: 1 });
+    }
+  }
+
+  return [...shared.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit)
+    .map(({ state: s, via }) => ({ state: s, via }));
+}
 
 /** Resolve a localised URL segment back to its state. */
 export function getStateBySlug(lang: Lang, slug: string): MentalState | undefined {

@@ -77,6 +77,40 @@ export const UI = {
     en: 'Understanding a good state is useful too — it is easier to get back to something when you know how you got there.',
   },
 
+  // ── The graph ───────────────────────────────────────────────────────────
+  relatedHeading: { es: 'Corre en las mismas partes', en: 'Runs on the same parts' },
+  /** Naming the shared region is the point; "related" alone is a content farm. */
+  relatedVia: { es: 'Comparten', en: 'Shares' },
+  /*
+    A separate heading for the islands. "Corre en las mismas partes" over "this
+    one shares no parts" is a section arguing with itself.
+  */
+  relatedHeadingAlone: { es: 'El resto del cerebro', en: 'The rest of the brain' },
+  relatedNoneShared: {
+    es: 'Ninguno de los otros doce estados corre en estas mismas partes.',
+    en: 'None of the other twelve states run on these same parts.',
+  },
+  relatedNoPlace: {
+    es: 'Este estado se explica por procesos, no por una zona concreta del cerebro.',
+    en: 'This one is explained by processes, not by a particular place in the brain.',
+  },
+  relatedAtlas: {
+    es: 'Ver las doce partes en el atlas',
+    en: 'See all twelve parts in the atlas',
+  },
+  atlasTitle: { es: 'El atlas', en: 'The atlas' },
+  atlasHeadline: {
+    es: 'Las mismas partes, en distintos estados',
+    en: 'The same parts, in different states',
+  },
+  atlasIntro: {
+    es: 'Doce partes, trece estados. Toca una zona para ver qué hace y en qué estados aparece.',
+    en: 'Twelve parts, thirteen states. Tap a region to see what it does and where it shows up.',
+  },
+  atlasPick: { es: 'Las doce partes', en: 'The twelve parts' },
+  atlasAppearsIn: { es: 'Aparece en', en: 'Shows up in' },
+  atlasLink: { es: 'Ver el atlas', en: 'Explore the atlas' },
+
   skipToContent: { es: 'Saltar al contenido', en: 'Skip to content' },
 
   // ── Triage ──────────────────────────────────────────────────────────────
