@@ -66,6 +66,16 @@ function sample(signature: Signature, u: number, phase: number): number {
     case 'scan':
       // A slow sweep with a fast probe riding it — looking, then finding.
       return Math.sin(u * Math.PI * 2 + phase) * 10 + Math.sin(u * Math.PI * 17 + phase) * 2.5 * env;
+    case 'grind':
+      // The busiest trace here and the only one that neither climbs nor decays:
+      // ten crossings of the baseline, full amplitude, zero net drift. Effort
+      // that keeps costing and keeps holding. The rectified second term is what
+      // makes each push read as a push rather than a wave — it has no trough.
+      return (
+        Math.sin(u * Math.PI * 10 + phase) * 8.5 +
+        Math.abs(Math.sin(u * Math.PI * 5 + phase)) * 8.5 -
+        7
+      );
     case 'echo':
       return u < 0.16
         ? Math.sin(u * Math.PI * 6.2 + phase) * 14

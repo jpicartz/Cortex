@@ -53,10 +53,16 @@ export const triage: TriageTree = {
         {
           /*
             The quiet fourth door. Someone who is fine should not have to claim a
-            problem to use the app, and the `good` band exists precisely for them.
+            problem to use the app — and neither should someone who is simply
+            mid-effort. Worded as "none of those" rather than "things are good"
+            since grit joined this branch: being in the hard middle of something
+            is not distress located anywhere, but it is not feeling great either.
           */
-          label: { es: 'La verdad, ando bien', en: 'Honestly, things are good' },
-          hint: { es: 'Vengo por otra cosa', en: 'I am here for something else' },
+          label: { es: 'Nada de eso — vengo por otra cosa', en: 'None of those' },
+          hint: {
+            es: 'Quiero rendir o sostener algo',
+            en: 'I am here to do something, not to fix something',
+          },
           next: 'good',
         },
       ],
@@ -162,6 +168,13 @@ export const triage: TriageTree = {
             en: 'I want to notice more openings',
           },
           state: 'radar',
+        },
+        {
+          label: {
+            es: 'Estoy en la parte difícil de algo',
+            en: 'I am in the hard part of something',
+          },
+          state: 'aguante',
         },
       ],
     },

@@ -9,6 +9,11 @@ import type { Lang } from '@/content/schema';
  * and a build step to solve problems this app does not have.
  *
  * Spanish is written natively, not translated from the English.
+ *
+ * A few strings carry counts — how many regions the atlas holds, how many
+ * states triage is choosing between. Those are written as `{n}` placeholders
+ * and filled from the parsed content at render, because adding one state used
+ * to leave five sentences quietly claiming the old number.
  */
 export const UI = {
   siteName: { es: 'Cortex', en: 'Cortex' },
@@ -71,10 +76,19 @@ export const UI = {
    * bad moment is not being cheerfully addressed by a page they came to for
    * help.
    */
-  menuGoodBand: { es: 'O las cosas van bien', en: 'Or things are actually good' },
+  /*
+    Reframed when grit joined this band. "Or things are actually good" could not
+    cover a state whose own blurb is "everything says stop" — but these four do
+    share something real: they are capacities you are trying to hold, not
+    distress you are trying to remove. That is the band, and it always was.
+  */
+  menuGoodBand: {
+    es: 'O estás intentando que algo salga bien',
+    en: 'Or you are trying to make something work',
+  },
   menuGoodBandHelp: {
-    es: 'Entender un buen estado también sirve: es más fácil volver a algo cuando sabes cómo llegaste.',
-    en: 'Understanding a good state is useful too — it is easier to get back to something when you know how you got there.',
+    es: 'Estos no son problemas que quitar: son cosas que quieres sostener. Es más fácil volver a algo cuando sabes cómo llegaste.',
+    en: 'These are not problems to remove — they are things you want to hold onto. It is easier to get back to something when you know how you got there.',
   },
 
   // ── The graph ───────────────────────────────────────────────────────────
@@ -87,16 +101,16 @@ export const UI = {
   */
   relatedHeadingAlone: { es: 'El resto del cerebro', en: 'The rest of the brain' },
   relatedNoneShared: {
-    es: 'Ninguno de los otros doce estados corre en estas mismas partes.',
-    en: 'None of the other twelve states run on these same parts.',
+    es: 'Ningún otro estado corre en estas mismas partes.',
+    en: 'No other state runs on these same parts.',
   },
   relatedNoPlace: {
     es: 'Este estado se explica por procesos, no por una zona concreta del cerebro.',
     en: 'This one is explained by processes, not by a particular place in the brain.',
   },
   relatedAtlas: {
-    es: 'Ver las doce partes en el atlas',
-    en: 'See all twelve parts in the atlas',
+    es: 'Ver todas las partes en el atlas',
+    en: 'See every part in the atlas',
   },
   atlasTitle: { es: 'El atlas', en: 'The atlas' },
   atlasHeadline: {
@@ -104,10 +118,10 @@ export const UI = {
     en: 'The same parts, in different states',
   },
   atlasIntro: {
-    es: 'Doce partes, trece estados. Toca una zona para ver qué hace y en qué estados aparece.',
-    en: 'Twelve parts, thirteen states. Tap a region to see what it does and where it shows up.',
+    es: '{regions} partes, {states} estados. Toca una zona para ver qué hace y en qué estados aparece.',
+    en: '{regions} parts, {states} states. Tap a region to see what it does and where it shows up.',
   },
-  atlasPick: { es: 'Las doce partes', en: 'The twelve parts' },
+  atlasPick: { es: 'Todas las partes', en: 'Every part' },
   atlasAppearsIn: { es: 'Aparece en', en: 'Shows up in' },
   atlasLink: { es: 'Ver el atlas', en: 'Explore the atlas' },
 
@@ -136,8 +150,8 @@ export const UI = {
    * and cheap to correct.
    */
   triageDisclaimer: {
-    es: 'Esto no es un diagnóstico: es lo más cercano de trece. Si no le atina, elige otra y ya.',
-    en: 'This is not a diagnosis — it is the nearest of thirteen. If it is not right, just pick another.',
+    es: 'Esto no es un diagnóstico: es lo más cercano de {states}. Si no le atina, elige otra y ya.',
+    en: 'This is not a diagnosis — it is the nearest of {states}. If it is not right, just pick another.',
   },
   triageGo: { es: 'Llévame ahí', en: 'Take me there' },
   triageNotIt: { es: 'No es eso', en: 'That is not it' },
@@ -155,6 +169,15 @@ export const UI = {
   startHereHelp: {
     es: 'Si lo que quieres es bajarle ahora mismo, haz esto y ya. Lo de abajo puede esperar a que estés mejor.',
     en: 'If you just need this to come down right now, do this and nothing else. The rest can wait until you are steadier.',
+  },
+  /*
+    The `good` band needs its own line. "Until you are steadier" assumes the
+    reader is trying to bring something down, which is wrong for all four of
+    these — nobody reading about flow or grit is waiting to feel better first.
+  */
+  startHereHelpGood: {
+    es: 'Si solo quieres hacer algo ya, empieza por aquí. Lo de abajo explica por qué funciona.',
+    en: 'If you just want to do something now, start here. What follows explains why it works.',
   },
 
   // ── Techniques ──────────────────────────────────────────────────────────
@@ -261,4 +284,16 @@ export type UIKey = keyof typeof UI;
 /** `t(lang)` gives you a resolver bound to one language. */
 export function t(lang: Lang) {
   return (key: UIKey): string => UI[key][lang];
+}
+
+/**
+ * Fill `{name}` placeholders in a UI string.
+ *
+ * Deliberately not a formatting library: two languages, no plural rules, and
+ * the only variables are integer counts derived from the parsed content.
+ */
+export function fill(template: string, values: Record<string, number | string>): string {
+  return template.replace(/\{(\w+)\}/g, (whole, key: string) =>
+    key in values ? String(values[key]) : whole,
+  );
 }

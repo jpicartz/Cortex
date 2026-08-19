@@ -6,7 +6,7 @@ export const enfoque: MentalState = {
   icon: 'target',
   accent: 'teal',
   signature: 'steady',
-  tile: 'standard',
+  tile: 'feature',
   band: 'good',
 
   label: { es: 'En la zona', en: 'Locked in' },

@@ -401,7 +401,7 @@ export function MechanismStage({
   if (!scrollMode) {
     return (
       <section id="understand" className="mt-12 w-screen scroll-mt-8 [margin-inline:calc(50%-50vw)]">
-        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 xl:max-w-[min(80rem,calc(100vw-24rem))]">
           {heading}
           <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
             <div className="lg:sticky lg:top-8">{staticVisual}</div>
@@ -431,11 +431,18 @@ export function MechanismStage({
         The ambient field keeps running underneath, so breaking out of the
         article column just gives the diagram room: it was capped near 340px
         inside `max-w-3xl`, about a fifth of a 1440px screen.
+
+        Full-bleed does NOT mean under the section rail, though. The rail is
+        `fixed left-0 w-44` from `xl` up, and a plain centred `max-w-7xl` put
+        this content at x=20 on a 1280px screen — 156px of it running straight
+        under the rail, on every state page, at every common laptop width up to
+        about 1570px. The inner container reserves 12rem a side above `xl` to
+        stay clear of it; below `xl` the rail is hidden and the cap lifts.
       */
       className="relative mt-12 w-screen [margin-inline:calc(50%-50vw)]"
     >
       <div className="sticky top-0 flex min-h-dvh flex-col justify-center px-5 py-6 sm:px-8 lg:py-10">
-        <div className="mx-auto w-full max-w-7xl">
+        <div className="mx-auto w-full max-w-7xl xl:max-w-[min(80rem,calc(100vw-24rem))]">
         {heading}
 
         <div className="relative mt-6 grid items-center gap-5 lg:mt-8 lg:grid-cols-[1.1fr_1fr] lg:gap-14">

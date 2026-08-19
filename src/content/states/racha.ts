@@ -6,7 +6,7 @@ export const racha: MentalState = {
   icon: 'trend-up',
   accent: 'amber',
   signature: 'rising',
-  tile: 'standard',
+  tile: 'feature',
   band: 'good',
 
   label: { es: 'Voy en racha', en: "I'm so back" },

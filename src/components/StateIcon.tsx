@@ -101,6 +101,13 @@ const PATHS: Record<IconKey, React.ReactNode> = {
   ),
 
   // Training your radar — a sweep, and the thing it just found
+  mountain: (
+    <>
+      <path d="M3 19h18" />
+      <path d="m5.5 19 5-11 3 6 2-3 3 8" />
+      <path d="m9.2 11.4 2.6 1.4" />
+    </>
+  ),
   radar: (
     <>
       <path d="M12 12 5.6 5.6" />

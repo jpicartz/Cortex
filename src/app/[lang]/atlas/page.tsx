@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { LANGS, isLang, REGION_INDEX } from '@/content';
+import { LANGS, STATES, isLang, REGION_INDEX } from '@/content';
 import type { Region } from '@/content/schema';
-import { UI } from '@/lib/ui';
+import { UI, fill } from '@/lib/ui';
 import { SectionHeading } from '@/components/SectionHeading';
 import { AmbientField } from '@/components/AmbientField';
 import { TransitionLink } from '@/components/TransitionLink';
@@ -29,7 +29,10 @@ export async function generateMetadata({
 
   return {
     title: UI.atlasTitle[lang],
-    description: UI.atlasIntro[lang],
+    description: fill(UI.atlasIntro[lang], {
+      regions: REGION_INDEX.size,
+      states: STATES.length,
+    }),
     alternates: {
       canonical: `/${lang}/atlas`,
       languages: { es: '/es/atlas', en: '/en/atlas', 'x-default': '/es/atlas' },
@@ -83,7 +86,7 @@ export default async function AtlasPage({ params }: { params: Promise<{ lang: st
           {UI.atlasHeadline[lang]}
         </h1>
         <p className="mt-3 max-w-prose text-[1.0625rem] leading-relaxed text-fg-soft">
-          {UI.atlasIntro[lang]}
+          {fill(UI.atlasIntro[lang], { regions: REGION_INDEX.size, states: STATES.length })}
         </p>
       </header>
 

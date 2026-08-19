@@ -88,6 +88,7 @@ export const ICONS = [
   'trend-up',
   'target',
   'radar',
+  'mountain',
 ] as const;
 export type IconKey = (typeof ICONS)[number];
 
@@ -104,6 +105,7 @@ export const REGIONS = [
   'vlpfc',
   'dlpfc',
   'acc',
+  'amcc',
   'hippocampus',
   'ventral-striatum',
   'limbic',
@@ -159,6 +161,8 @@ export const SIGNATURES = [
   'steady',
   /** Sweeping back and forth, looking. */
   'scan',
+  /** Effortful and repeating, holding its level instead of decaying. */
+  'grind',
 ] as const;
 export type Signature = (typeof SIGNATURES)[number];
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { Lang, MentalState, TriageTree } from '@/content/schema';
-import { UI } from '@/lib/ui';
+import { UI, fill } from '@/lib/ui';
 import { StateIcon } from './StateIcon';
 import { TransitionLink } from './TransitionLink';
 
@@ -120,7 +120,7 @@ export function Triage({
             the way out sits next to the way forward rather than below it.
           */}
           <p className="mt-4 max-w-prose text-[0.9375rem] leading-relaxed text-fg-soft">
-            {UI.triageDisclaimer[lang]}
+            {fill(UI.triageDisclaimer[lang], { states: states.length })}
           </p>
         </div>
 

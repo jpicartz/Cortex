@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import type { Lang, Technique } from '@/content/schema';
+import type { Lang, MentalState, Technique } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { BreathPacer } from './tools/BreathPacer';
 import { CountdownTimer } from './tools/CountdownTimer';
@@ -24,10 +24,13 @@ export function TechniqueCard({
    * two can never drift apart in content.
    */
   prominent = false,
+  /** Which half of the menu the state belongs to; only the blurb varies. */
+  band = 'difficult',
 }: {
   technique: Technique;
   lang: Lang;
   prominent?: boolean;
+  band?: MentalState['band'];
 }) {
   const steps = technique.steps[lang];
   const tool = technique.tool;
@@ -187,7 +190,7 @@ export function TechniqueCard({
 
       {prominent && (
         <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-fg-soft">
-          {UI.startHereHelp[lang]}
+          {band === 'good' ? UI.startHereHelpGood[lang] : UI.startHereHelp[lang]}
         </p>
       )}
 

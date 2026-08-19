@@ -199,7 +199,7 @@ export default async function StatePage({
           noise; omitting it from the accessibility tree would be the bug.
         */}
         <h2 className="sr-only">{UI.startHere[lang]}</h2>
-        <TechniqueCard technique={state.techniques[0]} lang={lang} prominent />
+        <TechniqueCard technique={state.techniques[0]} lang={lang} prominent band={state.band} />
       </section>
 
       {/* ── FEEL: recognition before explanation. ───────────────────────── */}

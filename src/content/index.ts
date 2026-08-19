@@ -26,6 +26,7 @@ import { futuro } from './states/futuro';
 import { racha } from './states/racha';
 import { enfoque } from './states/enfoque';
 import { radar } from './states/radar';
+import { aguante } from './states/aguante';
 import { triage } from './triage';
 import { REGION_INFO } from './regions';
 
@@ -48,6 +49,7 @@ const RAW = [
   racha,
   enfoque,
   radar,
+  aguante,
 ];
 
 /**

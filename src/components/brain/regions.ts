@@ -96,6 +96,17 @@ export const REGION_GEOMETRY: Record<Region, RegionGeometry> = {
     shapes: [{ kind: 'stroke', d: 'M106 146C116 122 146 107 180 105', width: 10 }],
     anchor: { x: 144, y: 100 },
   },
+  /*
+    Posterior to `acc` and deliberately a separate node. The anterior
+    MID-cingulate is where the effort cost/benefit work is reported; the
+    rostral ACC below it is what the social-pain literature points at. Folding
+    them into one region would have made the atlas claim that fear of judgment
+    and grit share machinery, which is more than the evidence supports.
+  */
+  amcc: {
+    shapes: [{ kind: 'stroke', d: 'M182 100C202 99 220 105 232 118', width: 10 }],
+    anchor: { x: 206, y: 88 },
+  },
   amygdala: {
     shapes: [{ kind: 'ellipse', cx: 142, cy: 171, rx: 8, ry: 7 }],
     anchor: { x: 138, y: 192 },

@@ -48,6 +48,13 @@ export const REGION_INFO: Record<string, RegionInfo> = {
       en: 'Registers conflict and social pain. Rejection is processed with some of the same machinery as physical pain, and that is not a metaphor.',
     },
   },
+  amcc: {
+    name: { es: 'Cingulado medio anterior', en: 'Anterior mid-cingulate' },
+    role: {
+      es: 'Calcula si seguir vale lo que cuesta, y rehace la cuenta cada pocos segundos.',
+      en: 'Works out whether carrying on is worth what it costs, and redoes the sum every few seconds.',
+    },
+  },
   hippocampus: {
     name: { es: 'Hipocampo', en: 'Hippocampus' },
     role: {
