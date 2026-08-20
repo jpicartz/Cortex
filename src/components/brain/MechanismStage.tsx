@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useSyncExternalStore } from 'react';
 
 import type { Lang, MentalState, Signature } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { getFalse, getRevealReady, subscribeNever } from '@/lib/domStore';
 import { SectionHeading } from '../SectionHeading';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import { clamp01, smoothstep } from '@/lib/scrollDriver';
@@ -73,7 +74,14 @@ export function MechanismStage({
 }) {
   const { headline, body, parts, focus, analogy } = mechanism;
 
-  const [scrollMode, setScrollMode] = useState(false);
+  /*
+    `reveal-ready` is set by the inline script when JS is running and motion is
+    welcome, before first paint, and never changes after. Reading it as an
+    external store rather than copying it into state in a mount effect means
+    the pinned sequence is chosen on the first client render instead of the
+    second — no flash of the static layout on the way in.
+  */
+  const scrollMode = useSyncExternalStore(subscribeNever, getRevealReady, getFalse);
 
   const outerRef = useRef<HTMLElement>(null);
   const regionRefs = useRef<(SVGGElement | null)[]>([]);
@@ -105,10 +113,6 @@ export function MechanismStage({
     });
     return groups;
   }, [body, lang, parts, focus]);
-
-  useEffect(() => {
-    if (document.documentElement.classList.contains('reveal-ready')) setScrollMode(true);
-  }, []);
 
   const onProgress = useCallback(
     (p: number) => {

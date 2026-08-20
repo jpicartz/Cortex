@@ -52,10 +52,8 @@ export function BreathPacer({
   const [finished, setFinished] = useState(false);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [cyclesLeft, setCyclesLeft] = useState(cycles);
-  const [remaining, setRemaining] = useState(Math.ceil(phases[0].ms / 1000));
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   /**
    * Cycle countdown lives in a ref as well as state. The ref is the source of
    * truth for the timing logic (the timeout closure would otherwise read a
@@ -65,9 +63,7 @@ export function BreathPacer({
 
   const clearTimers = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    if (tickRef.current) clearInterval(tickRef.current);
     timerRef.current = null;
-    tickRef.current = null;
   }, []);
 
   useEffect(() => clearTimers, [clearTimers]);
@@ -76,13 +72,6 @@ export function BreathPacer({
     if (!running) return;
 
     const phase = phases[phaseIndex];
-    setRemaining(Math.ceil(phase.ms / 1000));
-
-    // Visible per-second countdown, so the exercise still reads correctly
-    // for anyone with reduced motion enabled (where the ring will not animate).
-    tickRef.current = setInterval(() => {
-      setRemaining((r) => (r > 1 ? r - 1 : 1));
-    }, 1000);
 
     timerRef.current = setTimeout(() => {
       const isLastPhase = phaseIndex === phases.length - 1;
@@ -133,7 +122,6 @@ export function BreathPacer({
     setFinished(false);
     setPhaseIndex(0);
     setCyclesLeft(cycles);
-    setRemaining(Math.ceil(phases[0].ms / 1000));
   }
 
   const phase = phases[phaseIndex];
@@ -165,9 +153,18 @@ export function BreathPacer({
               <p aria-live="polite" className="font-display text-xl text-fg">
                 {UI[phase.labelKey][lang]}
               </p>
-              <p className="mt-0.5 text-3xl font-semibold tabular-nums text-accent-ink">
-                {remaining}
-              </p>
+              {/*
+                Keyed by phase, so a new phase REMOUNTS it and the seconds come
+                from `useState`'s initialiser. That is the whole reason this is
+                a component: the count used to be parent state reset by a
+                synchronous `setRemaining` inside the timing effect, which
+                rendered once with the previous phase's number before correcting
+                itself.
+              */}
+              <PhaseCountdown
+                key={`${cyclesLeft}-${phaseIndex}`}
+                seconds={Math.ceil(phase.ms / 1000)}
+              />
             </>
           ) : (
             <p className="text-sm text-fg-mute">
@@ -195,5 +192,26 @@ export function BreathPacer({
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The per-second countdown for one phase.
+ *
+ * Visible so the exercise still reads correctly for anyone with reduced motion
+ * enabled, where the ring does not animate and the number is the only cue that
+ * time is passing. It floors at 1 rather than 0: the phase ends on the parent's
+ * timeout, and showing 0 for a beat before the label changes reads as a stall.
+ */
+function PhaseCountdown({ seconds }: { seconds: number }) {
+  const [remaining, setRemaining] = useState(seconds);
+
+  useEffect(() => {
+    const id = setInterval(() => setRemaining((r) => (r > 1 ? r - 1 : 1)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <p className="mt-0.5 text-3xl font-semibold tabular-nums text-accent-ink">{remaining}</p>
   );
 }

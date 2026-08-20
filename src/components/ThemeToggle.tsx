@@ -1,25 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { Lang } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { readPrefs, writePrefs } from '@/lib/prefs';
+import { getFalse, getIsDark, subscribeToRootClass } from '@/lib/domStore';
 
 export function ThemeToggle({ lang }: { lang: Lang }) {
-  // Starts undefined so the first render matches the server markup; the real
-  // value is read after mount. The inline script in the layout has already
-  // applied the correct class, so there is nothing to flash.
-  const [dark, setDark] = useState<boolean | undefined>(undefined);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains('dark'));
-  }, []);
+  /*
+    The theme lives on `<html>`, not in React — the inline script in the layout
+    puts it there before first paint. So this subscribes to it rather than
+    keeping a copy: `dark` here only picks the button's label, and the observer
+    means the toggle does not have to write the same fact twice.
+  */
+  const dark = useSyncExternalStore(subscribeToRootClass, getIsDark, getFalse);
 
   function toggle() {
     const next = !document.documentElement.classList.contains('dark');
     document.documentElement.classList.toggle('dark', next);
     writePrefs({ ...readPrefs(), theme: next ? 'dark' : 'light' });
-    setDark(next);
   }
 
   const label = dark ? UI.switchToLight[lang] : UI.switchToDark[lang];
