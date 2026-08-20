@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Lang } from '@/content/schema';
-import { STATES } from '@/content';
+import { PAGES, STATES } from '@/content';
 import { UI } from '@/lib/ui';
 import { ThemeToggle } from './ThemeToggle';
 import { LangToggle } from './LangToggle';
@@ -12,7 +12,17 @@ import { LangToggle } from './LangToggle';
  */
 export function SiteHeader({ lang }: { lang: Lang }) {
   const other: Lang = lang === 'es' ? 'en' : 'es';
-  const slugMap = Object.fromEntries(STATES.map((s) => [s.slug[lang], s.slug[other]]));
+
+  /*
+    Every route the `[slug]` segment can serve, plus the literal `atlas`
+    segment. Built from STATES alone, this silently dropped the prose pages and
+    the atlas: switching language there fell back to `/en` and threw you back to
+    the home page instead of the same page in the other language.
+  */
+  const slugMap: Record<string, string> = {
+    ...Object.fromEntries([...STATES, ...PAGES].map((s) => [s.slug[lang], s.slug[other]])),
+    atlas: 'atlas',
+  };
 
   return (
     <header className="border-b border-edge/70">
@@ -25,6 +35,17 @@ export function SiteHeader({ lang }: { lang: Lang }) {
         </Link>
 
         <div className="flex items-center gap-1">
+          {/*
+            The atlas was reachable only from the foot of the menu and the
+            footer, which is to say not reachable. It is the most interesting
+            thing here and it was the hardest to find.
+          */}
+          <Link
+            href={`/${lang}/atlas`}
+            className="rounded-full px-3 py-1.5 text-sm font-medium text-fg-soft transition-colors hover:bg-raised hover:text-fg"
+          >
+            {UI.atlasTitle[lang]}
+          </Link>
           <LangToggle lang={lang} slugMap={slugMap} />
           <ThemeToggle lang={lang} />
         </div>

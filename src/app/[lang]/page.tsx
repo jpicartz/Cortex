@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { STATES, TRIAGE, isLang, LANGS } from '@/content';
+import { PAGES, STATES, TRIAGE, isLang, LANGS } from '@/content';
 import type { Lang, MentalState } from '@/content/schema';
 import { UI } from '@/lib/ui';
 import { StateIcon } from '@/components/StateIcon';
@@ -110,14 +110,23 @@ export default async function MenuPage({ params }: { params: Promise<{ lang: str
         </div>
 
         {/*
-          The atlas sits at the foot of the menu, not the top. It is the
-          curious-visitor door, and someone arriving in distress should reach
-          thirteen states before an invitation to go exploring.
+          The two doors that are not a feeling: the atlas, and the page arguing
+          why any of this should work. Both sit at the FOOT of the menu, after
+          all fourteen states, because someone arriving in distress should reach
+          the thing that helps before an invitation to go exploring.
+
+          They are also both in the header/footer now. Keeping them only here
+          meant nobody found them — including the person who asked for them.
         */}
-        <div className="mt-14 flex justify-center sm:mt-16">
+        <div className="mt-14 flex flex-wrap justify-center gap-3 sm:mt-16">
           <TransitionLink href={`/${lang}/atlas`} className="btn-quiet">
             {UI.atlasLink[lang]}
           </TransitionLink>
+          {PAGES.map((page) => (
+            <TransitionLink key={page.id} href={`/${lang}/${page.slug[lang]}`} className="btn-quiet">
+              {page.label[lang]}
+            </TransitionLink>
+          ))}
         </div>
       </div>
     </>
