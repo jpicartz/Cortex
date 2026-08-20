@@ -112,6 +112,8 @@ export const UI = {
     es: 'Ver todas las partes en el atlas',
     en: 'See every part in the atlas',
   },
+  oneTrueThingLabel: { es: 'Un dato', en: 'One more thing' },
+  oneTrueThingVia: { es: 'De', en: 'From' },
   atlasTitle: { es: 'El atlas', en: 'The atlas' },
   atlasHeadline: {
     es: 'Las mismas partes, en distintos estados',

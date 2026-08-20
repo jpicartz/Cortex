@@ -150,6 +150,19 @@ export const enfoque: MentalState = {
     },
   ],
 
+  /*
+    Leroy (2009), sources[0], read in full. The counterintuitive half of that
+    paper: time pressure on the FIRST task improved performance on the next
+    one, because it forced disengagement. Nothing in the body says this, and it
+    inverts the obvious advice.
+  */
+  oneTrueThing: {
+    source: 0,
+    text: {
+      es: 'En el mismo estudio pasó algo al revés de lo esperado: tener prisa en la primera tarea mejoraba el rendimiento en la siguiente. La presión obligaba a soltarla. Terminar no bastaba; soltar sí.',
+      en: 'The same study found something backwards: being rushed on the first task improved performance on the next one. The pressure forced you to let go of it. Finishing was not enough; letting go was.',
+    },
+  },
   sources: [
     {
       label:

@@ -167,6 +167,18 @@ export const ansiedad: MentalState = {
     },
   ],
 
+  /*
+    sources[1], read today. The number is the useful part: the fast path here
+    runs five cycles, and knowing one is often enough lowers the bar to start,
+    which is the whole design of that card.
+  */
+  oneTrueThing: {
+    source: 1,
+    text: {
+      es: 'No hacen falta muchos. Uno a tres suspiros fisiológicos suelen bastar para bajar el pico — el ejercicio de arriba trae cinco porque son gratis, no porque los necesites todos.',
+      en: 'You do not need many. One to three physiological sighs is usually enough to take the edge off — the exercise above runs five because they are free, not because you need all of them.',
+    },
+  },
   sources: [
     {
       label:

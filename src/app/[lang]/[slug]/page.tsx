@@ -14,6 +14,7 @@ import { CajalField } from '@/components/brain/CajalField';
 import { AmbientField } from '@/components/AmbientField';
 import { SectionRail } from '@/components/SectionRail';
 import { RelatedStates } from '@/components/RelatedStates';
+import { OneTrueThing } from '@/components/OneTrueThing';
 import { ProsePage } from '@/components/ProsePage';
 
 /** Every state and prose page, in both languages, generated at build time. */
@@ -259,6 +260,13 @@ export default async function StatePage({
         is lit.
       */}
       <MechanismStage mechanism={mechanism} signature={state.signature} lang={lang} />
+
+      {/*
+        Sits between understanding and doing, which is the beat where a
+        surprising number actually lands. Renders nothing on states whose
+        sources cannot be read.
+      */}
+      <OneTrueThing state={state} lang={lang} />
 
       {/* ── FIX: written steps, plus a tool to actually do it here. ─────── */}
       <section id="fix" className="mt-12 scroll-mt-8">

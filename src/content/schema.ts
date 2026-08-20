@@ -311,6 +311,30 @@ export const mentalStateSchema = z.object({
    */
   techniques: z.array(techniqueSchema).min(2),
 
+  /**
+   * One surprising, concrete fact — and the citation it came from.
+   *
+   * `source` is an INDEX into this state's own `sources` array, checked below.
+   * That is the whole point of the field's shape: the constraint that made this
+   * safe to write is that a fact must come from a paper the state already
+   * cites, and an index makes that structural instead of a promise. Renumber
+   * the sources and the build tells you which fact lost its footing.
+   *
+   * Optional, and genuinely so. Most citations on this site sit behind
+   * publisher gates — PubMed cookie-walls its abstracts, Nature and HBR
+   * redirect to auth, PsycNet and Cambridge refuse outright — so for most
+   * states the fact could only be written from memory about a paper nobody
+   * checked. That is exactly how a PubMed id pointing at an unrelated
+   * macular-degeneration study shipped here once. A state with no verifiable
+   * fact renders no card, and that is the correct outcome, not a gap to fill.
+   */
+  oneTrueThing: z
+    .object({
+      text: bi,
+      source: z.number().int().min(0),
+    })
+    .optional(),
+
   /** Citations are what separate this from a wellness blog. */
   sources: z
     // z.url() rather than z.string().url() — the latter is deprecated in Zod 4.
@@ -319,6 +343,9 @@ export const mentalStateSchema = z.object({
 
   /** Hand-written for the actual search query, not derived from the label. */
   seo: z.object({ title: bi, description: bi }),
+}).refine((s) => !s.oneTrueThing || s.oneTrueThing.source < s.sources.length, {
+  message: 'oneTrueThing.source points at a citation that does not exist',
+  path: ['oneTrueThing', 'source'],
 });
 
 export type MentalState = z.infer<typeof mentalStateSchema>;

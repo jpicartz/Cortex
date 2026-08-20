@@ -156,6 +156,18 @@ export const racha: MentalState = {
     },
   ],
 
+  /*
+    Mazzucchelli, Kane & Rees (2009), sources[1] — the DARE record, which is
+    readable and gives the figures. Both halves are in it, including the
+    limitation, which is the half that usually gets dropped.
+  */
+  oneTrueThing: {
+    source: 1,
+    text: {
+      es: 'Treinta y cuatro ensayos aleatorizados, 2.055 personas: simplemente programar y hacer cosas igualó a la terapia cognitiva completa para la depresión. El propio análisis marca el límite — el efecto era a corto plazo y dejaba de ser significativo entre los siete y los doce meses.',
+      en: 'Thirty-four randomised trials, 2,055 people: simply scheduling and doing things matched full cognitive therapy for depression. The analysis marks its own limit — the effect was short-term and stopped being significant somewhere between seven and twelve months.',
+    },
+  },
   sources: [
     {
       label:
