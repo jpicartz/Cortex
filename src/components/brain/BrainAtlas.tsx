@@ -14,6 +14,9 @@ type Entry = {
   states: { id: string; label: string; slug: string; icon: MentalState['icon']; accent: string }[];
 };
 
+/** Region pairs that appear together in one state, with the states naming them. */
+type Edge = { a: Region; b: Region; via: string[] };
+
 function ShapeNode({ shape }: { shape: Shape }) {
   if (shape.kind === 'ellipse') {
     return <ellipse cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} />;
@@ -48,7 +51,15 @@ function ShapeNode({ shape }: { shape: Shape }) {
  * many dimensions it has. The geometry, the anchors and the region→state
  * mapping all already existed.
  */
-export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) {
+export function BrainAtlas({
+  entries,
+  edges,
+  lang,
+}: {
+  entries: Entry[];
+  edges: Edge[];
+  lang: Lang;
+}) {
   const [active, setActive] = useState<Region | null>(null);
   /* Hover previews on the drawing without committing the panel to it. */
   const [hover, setHover] = useState<Region | null>(null);
@@ -58,6 +69,15 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
 
   const lit = hover ?? active;
   const rowId = (region: Region) => `${panelId}-${region}`;
+
+  /*
+    Edges touching the lit region. Most regions have none — `dlpfc` is used by
+    three states and still has zero, because each of those names one anatomical
+    part and fills the rest with processes. The key row says so in words; the
+    figure simply draws nothing, which is the honest picture.
+  */
+  const litEdges = lit ? edges.filter((e) => e.a === lit || e.b === lit) : [];
+  const litNeighbours = new Set(litEdges.map((e) => (e.a === lit ? e.b : e.a)));
 
   /*
     Below `lg` the figure and the key are stacked, so tapping a node on the
@@ -93,7 +113,13 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-start lg:gap-14">
+    /*
+      The figure takes the larger share now. It is the point of the page and it
+      was rendering at 453px on a 1512px screen — a brain marooned in margin,
+      which is exactly what made this page read as empty. The key is a list of
+      short names and does not need the width.
+    */
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
       {/* ── The figure. Sticky, so the key scrolls against a fixed drawing. ── */}
       <div className="relative lg:sticky lg:top-24">
         <svg
@@ -147,7 +173,14 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
               <g
                 key={region}
                 style={{
-                  opacity: lit === null ? 0.4 : lit === region ? 0.9 : 0.12,
+                  opacity:
+                    lit === null
+                      ? 0.4
+                      : lit === region
+                        ? 0.9
+                        : litNeighbours.has(region)
+                          ? 0.5
+                          : 0.12,
                   transition: 'opacity 260ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
@@ -156,6 +189,32 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
                 ))}
               </g>
             ))}
+          </g>
+
+          {/*
+            The connections, drawn between the same authored anchors the numbered
+            nodes sit on — so an edge always lands exactly under its node. Only
+            the lit region's edges are drawn: all six at once, over a schematic
+            this small, reads as scribble rather than structure.
+          */}
+          <g
+            className="text-accent-ink"
+            stroke="currentColor"
+            fill="none"
+            strokeWidth={1.4}
+            strokeLinecap="round"
+            style={{
+              opacity: litEdges.length ? 0.75 : 0,
+              transition: 'opacity 260ms cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            {litEdges.map((e) => {
+              const A = REGION_GEOMETRY[e.a].anchor;
+              const B = REGION_GEOMETRY[e.b].anchor;
+              return (
+                <line key={`${e.a}-${e.b}`} x1={A.x} y1={A.y} x2={B.x} y2={B.y} strokeDasharray="3 4" />
+              );
+            })}
           </g>
 
           <g
@@ -289,6 +348,46 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
                         </li>
                       ))}
                     </ul>
+
+                    {/*
+                      The connection, in words as well as on the figure. Most
+                      regions land in the second branch — six of thirteen have no
+                      neighbour at all, `dlpfc` among them despite being the
+                      most-used region here. Saying that is better than an empty
+                      heading, and it is the same shape as the state pages'
+                      "runs on its own".
+                    */}
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-fg-mute">
+                      {UI.atlasWorksWith[lang]}
+                    </p>
+                    {(() => {
+                      const near = edges
+                        .filter((e) => e.a === region || e.b === region)
+                        .map((e) => ({ other: e.a === region ? e.b : e.a, via: e.via }));
+
+                      if (!near.length) {
+                        return (
+                          <p className="mt-2 max-w-prose text-sm leading-relaxed text-fg-soft">
+                            {UI.atlasWorksAlone[lang]}
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <ul className="mt-2 space-y-1.5">
+                          {near.map(({ other, via }) => (
+                            <li key={other} className="text-sm leading-relaxed text-fg-soft">
+                              <span className="text-accent-ink">
+                                {REGION_INFO[other].name[lang]}
+                              </span>{' '}
+                              <span className="text-fg-mute">
+                                {UI.atlasVia[lang]} {via.join(', ')}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    })()}
                   </div>
                 ) : null}
               </li>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { LANGS, STATES, isLang, REGION_INDEX } from '@/content';
+import { LANGS, STATES, isLang, REGION_EDGES, REGION_INDEX } from '@/content';
 import type { Region } from '@/content/schema';
 import { UI, fill } from '@/lib/ui';
 import { SectionHeading } from '@/components/SectionHeading';
@@ -57,8 +57,19 @@ export default async function AtlasPage({ params }: { params: Promise<{ lang: st
       })),
     }));
 
+  /*
+    Flattened to plain strings here, in the server component, so the client
+    bundle never imports the content module — the same reason the language
+    toggle takes a slug map rather than looking states up itself.
+  */
+  const edgeList = REGION_EDGES.map((e) => ({
+    a: e.a,
+    b: e.b,
+    via: e.via.map((s) => s.label[lang]),
+  }));
+
   return (
-    <div data-accent="sky" className="relative mx-auto max-w-5xl px-5 py-8 sm:py-10">
+    <div data-accent="sky" className="relative mx-auto max-w-6xl px-5 py-8 sm:py-10">
       <AmbientField />
 
       <TransitionLink
@@ -92,7 +103,7 @@ export default async function AtlasPage({ params }: { params: Promise<{ lang: st
       </header>
 
       <div className="mt-10">
-        <BrainAtlas entries={entries} lang={lang} />
+        <BrainAtlas entries={entries} edges={edgeList} lang={lang} />
       </div>
 
       <p className="mt-10 max-w-prose text-xs leading-relaxed text-fg-mute">

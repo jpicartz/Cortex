@@ -169,6 +169,56 @@ export const REGION_INDEX: ReadonlyMap<Region, readonly MentalState[]> = (() => 
 })();
 
 /**
+ * Which regions turn up together inside one state's mechanism.
+ *
+ * `REGION_INDEX` answers "which states use this part". This answers the other
+ * direction — which parts are working *at the same time*, in one experience.
+ * Anxiety is the amygdala, the prefrontal cortex and the vagus at once; that is
+ * a different claim from "these three each appear somewhere on the site", and
+ * it is the one the atlas never drew.
+ *
+ * IT IS SPARSE, AND THAT IS THE CONTENT, NOT A BUG. Six edges across thirteen
+ * regions, and six regions have none at all — including `dlpfc`, the most-used
+ * region on the site, because focus, radar and overwhelm each name exactly one
+ * anatomical part and fill the rest of their mechanism with processes. The atlas
+ * says so out loud rather than rendering an empty frame. Densifying this by
+ * adding regions to states would be inventing anatomy, which is the one move
+ * that would undercut every citation here.
+ */
+export type RegionEdge = { a: Region; b: Region; via: readonly MentalState[] };
+
+export const REGION_EDGES: readonly RegionEdge[] = (() => {
+  const edges = new Map<string, { a: Region; b: Region; via: MentalState[] }>();
+
+  for (const state of STATES) {
+    const regions = state.mechanism.parts
+      .map((p) => p.region)
+      .filter((r): r is Region => Boolean(r));
+
+    for (let i = 0; i < regions.length; i++) {
+      for (let j = i + 1; j < regions.length; j++) {
+        // Sorted key so a–b and b–a are one edge, not two.
+        const [a, b] = [regions[i], regions[j]].sort() as [Region, Region];
+        const key = `${a}|${b}`;
+        const existing = edges.get(key);
+        if (existing) existing.via.push(state);
+        else edges.set(key, { a, b, via: [state] });
+      }
+    }
+  }
+
+  return [...edges.values()];
+})();
+
+/** The regions a given region shares a state with. Empty for most of them. */
+export function neighbours(region: Region): { region: Region; via: readonly MentalState[] }[] {
+  return REGION_EDGES.filter((e) => e.a === region || e.b === region).map((e) => ({
+    region: e.a === region ? e.b : e.a,
+    via: e.via,
+  }));
+}
+
+/**
  * Other states that share a brain region with this one.
  *
  * Ordered by how much they share, then capped — three links is a doorway, ten is

@@ -114,6 +114,12 @@ export const UI = {
   },
   oneTrueThingLabel: { es: 'Un dato', en: 'One more thing' },
   oneTrueThingVia: { es: 'De', en: 'From' },
+  atlasWorksWith: { es: 'Trabaja junto a', en: 'Works alongside' },
+  atlasWorksAlone: {
+    es: 'En estos estados no comparte trabajo con ninguna otra parte del mapa.',
+    en: 'In these states it does not share the work with any other part on the map.',
+  },
+  atlasVia: { es: 'en', en: 'in' },
   atlasTitle: { es: 'El atlas', en: 'The atlas' },
   atlasHeadline: {
     es: 'Las mismas partes, en distintos estados',
