@@ -351,6 +351,17 @@
     re-rasterising a viewport-sized gradient every frame is the expensive way to
     do this.
   */
+  /*
+    `--drift-scale` lets a page set the field's TEMPO without touching its
+    colour, its alpha or its geometry. Anxiety and no-motivation should not
+    breathe at the same rate behind the text, and the durations below are the
+    only thing that needs to know.
+
+    Defaults to 1, so any page that does not set it is unchanged. The three
+    durations stay mutually non-harmonic after scaling, which is the whole
+    reason they were 41/53/67 — scaling all three by the same factor preserves
+    that, and they still never re-sync.
+  */
   .ambient-blob {
     position: absolute;
     border-radius: 9999px;
@@ -368,7 +379,7 @@
       oklch(0.7 0.13 var(--hue) / var(--field-alpha)),
       transparent 68%
     );
-    animation: drift-a 41s ease-in-out infinite;
+    animation: drift-a calc(41s * var(--drift-scale, 1)) ease-in-out infinite;
   }
 
   .ambient-blob-b {
@@ -381,7 +392,7 @@
       oklch(0.72 0.11 calc(var(--hue) + 55) / var(--field-alpha)),
       transparent 70%
     );
-    animation: drift-b 53s ease-in-out infinite;
+    animation: drift-b calc(53s * var(--drift-scale, 1)) ease-in-out infinite;
   }
 
   .ambient-blob-c {
@@ -394,7 +405,7 @@
       oklch(0.68 0.1 calc(var(--hue) - 45) / var(--field-alpha)),
       transparent 72%
     );
-    animation: drift-c 67s ease-in-out infinite;
+    animation: drift-c calc(67s * var(--drift-scale, 1)) ease-in-out infinite;
   }
 
   @keyframes drift-a {

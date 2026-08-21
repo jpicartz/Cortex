@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
+import type { Signature } from '@/content/schema';
 import { clamp01, prefersReducedMotion, subscribeToScroll } from '@/lib/scrollDriver';
 
 /**
@@ -27,8 +28,33 @@ import { clamp01, prefersReducedMotion, subscribeToScroll } from '@/lib/scrollDr
  * dark background is a haze over text on a light one, so light mode gets its own
  * value — this sits behind every word on the site, unlike the Cajal tracery
  * which is confined to the margin.
+ *
+ * The state's signature sets the TEMPO and nothing else. Alpha, hue and geometry
+ * are untouched, because those are what the contrast sweep measured and they are
+ * not free parameters. Anxiety and no-motivation should not breathe at the same
+ * rate behind the text; that is the whole of the difference.
  */
-export function AmbientField() {
+
+/*
+ * Tempo by signature, in three groups rather than fifteen bespoke numbers.
+ * Grouping is the honest resolution here: the difference between a field that
+ * breathes fast and one that barely moves is felt, and nobody is going to
+ * perceive fifteen distinct rates. Anything unlisted rests at 1.
+ */
+const DRIFT_SCALE: Partial<Record<Signature, number>> = {
+  /* Fast and unsettled. */
+  erratic: 0.62,
+  spike: 0.62,
+  runaway: 0.68,
+  layered: 0.68,
+  /* Barely moving. */
+  flat: 1.7,
+  slow: 1.7,
+  stall: 1.45,
+  settle: 1.45,
+};
+
+export function AmbientField({ signature }: { signature?: Signature } = {}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,7 +79,12 @@ export function AmbientField() {
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-20 overflow-hidden"
-      style={{ contain: 'strict' }}
+      style={
+        {
+          contain: 'strict',
+          '--drift-scale': signature ? (DRIFT_SCALE[signature] ?? 1) : 1,
+        } as React.CSSProperties
+      }
     >
       <div ref={ref} style={{ willChange: 'transform' }} className="absolute inset-0">
         <div className="ambient-blob ambient-blob-a" />

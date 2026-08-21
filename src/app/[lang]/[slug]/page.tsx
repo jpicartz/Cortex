@@ -128,7 +128,8 @@ export default async function StatePage({
         Mounted inside the accented wrapper, not the layout, so both fields
         inherit this state's --hue for free.
       */}
-      <AmbientField />
+      {/* The state's own tempo behind the text — see AmbientField. */}
+      <AmbientField signature={state.signature} />
 
       {/*
         Sits in the margin, outside the prose column, and only above xl — see
