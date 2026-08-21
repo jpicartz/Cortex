@@ -6,7 +6,7 @@ export const aguante: MentalState = {
   icon: 'mountain',
   accent: 'indigo',
   signature: 'grind',
-  tile: 'feature',
+  tile: 'standard',
   band: 'good',
 
   label: { es: 'Aguante', en: 'Doing hard things' },

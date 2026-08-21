@@ -76,6 +76,14 @@ function sample(signature: Signature, u: number, phase: number): number {
         Math.abs(Math.sin(u * Math.PI * 5 + phase)) * 8.5 -
         7
       );
+    case 'settle':
+      // The only trace that ends quieter than it starts. Amplitude decays to a
+      // slow, even breath — arriving unsettled and coming to rest, which is the
+      // state, not a fade-out.
+      return (
+        Math.sin(u * Math.PI * 13 + phase) * 9 * Math.exp(-u * 2.6) +
+        Math.sin(u * Math.PI * 3 + phase) * 3.2
+      );
     case 'echo':
       return u < 0.16
         ? Math.sin(u * Math.PI * 6.2 + phase) * 14

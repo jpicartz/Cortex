@@ -89,6 +89,7 @@ export const ICONS = [
   'target',
   'radar',
   'mountain',
+  'anchor',
 ] as const;
 export type IconKey = (typeof ICONS)[number];
 
@@ -163,6 +164,8 @@ export const SIGNATURES = [
   'scan',
   /** Effortful and repeating, holding its level instead of decaying. */
   'grind',
+  /** Arrives unsettled and comes to rest. */
+  'settle',
 ] as const;
 export type Signature = (typeof SIGNATURES)[number];
 

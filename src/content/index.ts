@@ -29,6 +29,7 @@ import { racha } from './states/racha';
 import { enfoque } from './states/enfoque';
 import { radar } from './states/radar';
 import { aguante } from './states/aguante';
+import { calma } from './states/calma';
 import { triage } from './triage';
 import { REGION_INFO } from './regions';
 import { PAGES_RAW } from './pages';
@@ -53,6 +54,7 @@ const RAW = [
   enfoque,
   radar,
   aguante,
+  calma,
 ];
 
 /**

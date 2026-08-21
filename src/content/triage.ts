@@ -164,17 +164,41 @@ export const triage: TriageTree = {
         },
         {
           label: {
-            es: 'Quiero ver más oportunidades',
-            en: 'I want to notice more openings',
-          },
-          state: 'radar',
-        },
-        {
-          label: {
             es: 'Estoy en la parte difícil de algo',
             en: 'I am in the hard part of something',
           },
           state: 'aguante',
+        },
+        /*
+          A sub-branch, not a fifth answer: `triageAnswerSchema` caps a question
+          at four, and adding "being present" straight to this list would fail
+          the build. Grouping is better than a raised cap anyway — "turn the
+          noise down" is a real thing someone arrives wanting, and it splits
+          cleanly into being here versus seeing more.
+        */
+        {
+          label: { es: 'Quiero bajarle al ruido', en: 'I want the noise down' },
+          next: 'quiet',
+        },
+      ],
+    },
+
+    quiet: {
+      prompt: { es: '¿Más bien…?', en: 'More that…' },
+      answers: [
+        {
+          label: {
+            es: 'Quiero estar donde estoy',
+            en: 'I want to be where I am',
+          },
+          state: 'calma',
+        },
+        {
+          label: {
+            es: 'Quiero ver lo que se me está escapando',
+            en: 'I want to see what I am missing',
+          },
+          state: 'radar',
         },
       ],
     },

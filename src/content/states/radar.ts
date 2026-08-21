@@ -6,7 +6,7 @@ export const radar: MentalState = {
   icon: 'radar',
   accent: 'emerald',
   signature: 'scan',
-  tile: 'feature',
+  tile: 'standard',
   band: 'good',
 
   label: { es: 'Entrenar tu radar', en: 'Training your radar' },
