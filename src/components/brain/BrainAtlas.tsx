@@ -263,10 +263,25 @@ export function BrainAtlas({
                 left: `${((x - VIEWBOX.x) / VIEWBOX.width) * 100}%`,
                 top: `${((y - VIEWBOX.y) / VIEWBOX.height) * 100}%`,
                 /*
-                  Five of the twelve sit within about 30 units of each other at
-                  the base of the brain, because that is genuinely where the
+                  Five of the thirteen sit within about 30 units of each other
+                  at the base of the brain, because that is genuinely where the
                   amygdala, hippocampus and striatum are. Lifting the lit node
                   keeps it from being half-hidden behind a neighbour.
+
+                  Some of them still overlap, and on a 390px screen the amygdala
+                  node is covered outright — its anchor is ten viewBox units from
+                  the limbic one, about eleven pixels there. Tightening the
+                  padding makes this WORSE, not better (measured), because the
+                  collision is between the nodes themselves, not between their
+                  padding.
+
+                  This is left as it is deliberately. WCAG 2.5.8 is met through
+                  its equivalent-control exception: every region has a full-width
+                  row in the key beside the figure, doing exactly the same thing
+                  at a far larger size, and on the stacked mobile layout that
+                  list is the primary control anyway. The alternative — moving
+                  anatomy apart so the dots fit — is the one thing this file must
+                  never do.
                 */
                 zIndex: on ? 2 : 1,
                 background: on ? 'var(--c-accent-fill)' : 'var(--c-card)',
