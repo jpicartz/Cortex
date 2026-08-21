@@ -55,10 +55,15 @@ describe('citation sources', () => {
       a copy-paste that carried the wrong citation with it. Lieberman's affect
       labelling paper is the deliberate exception, cited by both enojo and
       ansiedad because both techniques rest on it.
+
+      A Huberman Lab episode used to sit in this list too, shared by
+      desmotivacion and procrastinacion. That exemption was the smell: one
+      podcast standing in for the primary literature on two different pages.
+      Both now cite papers, and leaving the entry here would quietly permit the
+      duplicate coming back.
       */
     const ALLOWED_SHARED = new Set([
       'https://journals.sagepub.com/doi/10.1111/j.1467-9280.2007.01916.x',
-      'https://www.hubermanlab.com/episode/controlling-your-dopamine-for-motivation-focus-and-satisfaction',
       'https://www.nature.com/articles/nrn.2015.26',
     ]);
 

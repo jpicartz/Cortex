@@ -38,8 +38,8 @@ export const racha: MentalState = {
     body: {
       es: [
         'La sensación no vino primero. El avance vino primero.',
-        'En el estudio más grande que existe sobre esto, casi doscientas personas anotaron su día durante meses: doce mil entradas. Lo que mejor predecía un buen día no era el reconocimiento, ni el sueldo, ni la presión. Era haber avanzado algo que les importaba.',
-        'Y no hacía falta que fuera grande. Un paso pequeño en algo que te importa mueve más el ánimo que un paso enorme en algo que no.',
+        'En el estudio de diarios más detallado que existe sobre esto, 222 personas de siete empresas anotaron su día durante meses. Los análisis en el tiempo encontraron que el ánimo y el trabajo que sale bien se alimentan: el buen ánimo venía antes de las buenas ideas, a veces con dos días de diferencia, y las buenas ideas dejaban buen ánimo detrás.',
+        'Y no hacía falta que fuera grande. En los ensayos de activación conductual, lo que mueve el ánimo es volver a hacer cosas que importan — no hacer muchas cosas, ni hacerlas bien.',
         'Es al revés de como lo contamos. No esperaste a tener ganas para avanzar. Avanzaste, y las ganas llegaron después a explicarlo.',
         'Tu cerebro tampoco premia el resultado final: premia la señal de que te estás acercando. Por eso la racha se siente tan bien mientras dura, y por eso se apaga cuando dejas de tener avances visibles que registrar.',
         'Lo que rompe una racha casi nunca es la falta de ganas. Es subirle demasiado a la apuesta el día que te sientes invencible, fallar, y leer ese fallo como que ya se acabó.',
@@ -47,8 +47,8 @@ export const racha: MentalState = {
       ],
       en: [
         'The feeling did not come first. The progress came first.',
-        'In the largest study of this there is, nearly two hundred people wrote down their day for months — twelve thousand entries. What best predicted a good day was not recognition, or pay, or pressure. It was having moved something forward that mattered to them.',
-        'And it did not have to be big. A small step on something you care about lifts you more than a large step on something you do not.',
+        'In the most detailed diary study of this there is, 222 people across seven companies wrote down their day for months. Time-lagged analyses found that mood and work going well feed each other: good mood came before good ideas, sometimes by as much as two days, and good ideas left good mood behind them.',
+        'And it did not have to be big. In the behavioural activation trials, what moves mood is going back to doing things that matter — not doing a lot of things, and not doing them well.',
         'It runs backwards from how we tell it. You did not wait to feel like it before moving. You moved, and the feeling arrived afterwards to explain it.',
         'Your brain does not reward the finish line either — it rewards the signal that you are closing on it. Which is why a streak feels so good while it lasts, and why it fades when you stop having visible progress to register.',
         'What breaks a streak is almost never running out of drive. It is raising the stakes too far on the day you feel invincible, missing, and reading that miss as proof it is over.',
@@ -171,8 +171,8 @@ export const racha: MentalState = {
   sources: [
     {
       label:
-        'Amabile & Kramer (2011), Harvard Business Review — The Power of Small Wins (12,000 daily diary entries)',
-      url: 'https://hbr.org/2011/05/the-power-of-small-wins',
+        'Amabile, Barsade, Mueller & Staw (2005), Administrative Science Quarterly 50(3): 367–403 — Affect and Creativity at Work (daily diaries, 222 employees across seven companies)',
+      url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.367',
     },
     {
       label:

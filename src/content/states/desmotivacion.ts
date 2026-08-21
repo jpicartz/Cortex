@@ -39,19 +39,19 @@ export const desmotivacion: MentalState = {
       es: [
         'La dopamina se explica mal casi siempre.',
         'No es lo que sientes cuando algo te gusta. Es lo que te empuja a ir por algo. Es el sistema de "quiero", no el de "disfruto". Por eso puedes tener cero ganas de hacer algo que sabes que vas a disfrutar.',
-        'Lo que importa no es cuánta dopamina tienes en un pico, sino dónde queda tu línea base entre picos. Y después de cada pico grande, tu línea base cae por debajo de donde estaba.',
-        'Si tu día está lleno de picos rápidos y baratos —el scroll, los videos cortos, las notificaciones, el azúcar— esa línea se va aplanando.',
-        'Es como subirle el volumen a los audífonos todos los días. Al principio suena mejor. Después nada suena a nada.',
-        'Con la línea base baja, todo lo que requiere esfuerzo y da recompensa lenta deja de parecer que valga la pena. No perdiste la motivación: subiste tanto el listón que lo normal ya no lo alcanza.',
+        'Su trabajo no es hacerte sentir bien: es decidir si vale la pena moverte. Con la dopamina reducida, los animales siguen disfrutando la recompensa igual — lo que dejan de hacer es el esfuerzo de ir por ella.',
+        'Y la cuenta es relativa. Si el día está lleno de recompensas inmediatas y sin esfuerzo —el scroll, los videos cortos, las notificaciones— lo que cuesta esfuerzo y paga tarde compite contra eso, y pierde.',
+        'Es como negociar el precio de algo mientras alguien te ofrece lo de al lado gratis. El precio no subió: cambió la comparación.',
+        'Por eso no se siente como no poder. Se siente como que no vale la pena. No perdiste la capacidad de disfrutar: se encareció el esfuerzo de llegar hasta ahí.',
         'Lo que la sube es lo contrario de lo que uno busca en ese estado: esfuerzo, movimiento, luz de la mañana, aburrimiento tolerado. Y la motivación no viene antes de la acción. Viene después de empezar.',
       ],
       en: [
         'Dopamine is almost always explained wrong.',
         'It isn\'t what you feel when you like something. It\'s what pushes you to go get something. It\'s the "want" system, not the "enjoy" system. Which is why you can have zero drive to do something you know you\'ll enjoy.',
-        'What matters isn\'t how much dopamine a peak gives you, but where your baseline sits between peaks. And after every large peak, that baseline drops below where it started.',
-        'If your day is full of fast, cheap peaks — scrolling, short video, notifications, sugar — that line keeps flattening.',
-        'It\'s like turning your headphones up a little every day. At first it sounds better. Eventually nothing sounds like anything.',
-        'With a low baseline, anything requiring effort with a slow payoff stops seeming worth it. You didn\'t lose your motivation. You raised the bar so high that ordinary things no longer clear it.',
+        'Its job isn\'t to make you feel good. It\'s to decide whether moving is worth it. With dopamine reduced, animals still enjoy the reward exactly as much — what they stop doing is the work of going to get it.',
+        'And the sum is relative. If the day is full of immediate, effortless rewards — scrolling, short video, notifications — then anything that costs effort and pays late is competing with those, and losing.',
+        'It\'s like haggling over the price of something while somebody offers you the thing next to it for free. The price didn\'t go up. The comparison changed.',
+        'So it doesn\'t feel like not being able to. It feels like not being worth it. You didn\'t lose the ability to enjoy things — the effort of reaching them got more expensive.',
         'What raises it is the opposite of what you crave in that state: effort, movement, morning light, tolerated boredom. And motivation doesn\'t come before action. It comes after starting.',
       ],
     },
@@ -152,8 +152,9 @@ export const desmotivacion: MentalState = {
 
   sources: [
     {
-      label: 'Huberman Lab — Controlling Your Dopamine for Motivation, Focus & Satisfaction',
-      url: 'https://www.hubermanlab.com/episode/controlling-your-dopamine-for-motivation-focus-and-satisfaction',
+      label:
+        'Salamone & Correa (2012), Neuron 76(3): 470–485 — The mysterious motivational functions of mesolimbic dopamine (effort and activation, not pleasure)',
+      url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4450094/',
     },
     {
       label: 'Berridge & Robinson (2016), American Psychologist — Liking, wanting and incentive salience',

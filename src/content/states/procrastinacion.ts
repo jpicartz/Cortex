@@ -187,10 +187,7 @@ export const procrastinacion: MentalState = {
       label: 'Sirois & Pychyl (2013) — Procrastination and the priority of short-term mood repair',
       url: 'https://onlinelibrary.wiley.com/doi/10.1111/spc3.12011',
     },
-    {
-      label: 'Huberman Lab — Dopamine, Mindset & Drive',
-      url: 'https://www.hubermanlab.com/episode/controlling-your-dopamine-for-motivation-focus-and-satisfaction',
-    },
+
     {
       label: 'Milkman, Minson & Volpp (2014), Management Science — Temptation bundling',
       url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2013.1784',

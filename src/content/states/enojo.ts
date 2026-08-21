@@ -32,25 +32,25 @@ export const enojo: MentalState = {
 
   mechanism: {
     headline: {
-      es: 'La química dura noventa segundos. El resto lo pones tú',
-      en: 'The chemistry lasts ninety seconds. The rest of it is you',
+      es: 'La descarga se va sola. Lo que la alarga es repasarla',
+      en: 'The surge clears on its own. What keeps it going is replaying it',
     },
     body: {
       es: [
-        'Cuando algo te enoja, tu cuerpo suelta una descarga de adrenalina y cortisol.',
-        'Esa descarga tiene vida corta: del orden de un minuto y medio desde que se dispara hasta que se limpia sola, si no le agregas nada. Es la regla de los noventa segundos que popularizó la neuroanatomista Jill Bolte Taylor.',
+        'Cuando algo te enoja, tu cuerpo suelta una descarga de adrenalina.',
+        'Esa descarga se limpia sola en cuestión de minutos si no le agregas nada: la adrenalina dura poco en sangre. Vas a oír que son exactamente noventa segundos; ese número lo popularizó la neuroanatomista Jill Bolte Taylor y no sale de ningún estudio. La idea de fondo sí se sostiene, la cifra exacta no.',
         'Lo que la mantiene viva es el pensamiento. Cada vez que repites la escena, ensayas la respuesta perfecta o te acuerdas de las otras veces que hizo lo mismo, la disparas otra vez desde cero.',
-        'El enojo de los primeros noventa segundos te pasó. El de la hora siguiente lo estás produciendo tú, sin querer.',
+        'El enojo del primer minuto te pasó. El de la hora siguiente lo estás produciendo tú, sin querer — y eso sí está medido: al comparar veintisiete emociones, lo que mejor explicaba cuánto duraba cada una era cuánto se le daba vueltas.',
         'Es una fogata que se apagaría sola y a la que le sigues echando leña.',
         'Eso no significa que el enojo esté mal ni que debas tragártelo. El enojo es información: casi siempre marca un límite cruzado o algo que te importa.',
         'El problema no es sentirlo. Es quedarte atrapado alimentándolo, que es donde deja de informar y solo desgasta.',
         'Y hay algo que funciona sorprendentemente bien: ponerle nombre. Cuando pasas de sentir la emoción a nombrarla con palabras precisas, la actividad de la amígdala baja. No es reprimir ni fingir calma. Nombrarlo con precisión ya lo baja de intensidad.',
       ],
       en: [
-        'When something angers you, your body releases a surge of adrenaline and cortisol.',
-        'That surge is short-lived: on the order of a minute and a half from trigger to clearing on its own, if you add nothing to it. It is the ninety-second rule popularised by the neuroanatomist Jill Bolte Taylor.',
+        'When something angers you, your body releases a surge of adrenaline.',
+        'That surge clears on its own within minutes if you add nothing to it: adrenaline does not last long in the blood. You will hear the figure of exactly ninety seconds; that number was popularised by the neuroanatomist Jill Bolte Taylor and does not come from a study. The underlying idea holds. The precise number does not.',
         'What keeps it alive is thought. Every time you replay the scene, rehearse the perfect comeback, or remember the other times they did this, you fire it again from zero.',
-        'The anger of the first ninety seconds happened to you. The anger of the next hour, you\'re producing.',
+        'The anger of the first minute happened to you. The anger of the next hour, you are producing — and that part is measured: across twenty-seven emotions, what best explained how long each one lasted was how much it was dwelt on.',
         'It\'s a fire that would go out on its own and you keep feeding it wood.',
         'That doesn\'t mean anger is wrong or that you should swallow it. Anger is information — it almost always marks a crossed boundary or something you care about.',
         'The problem isn\'t feeling it. It\'s getting stuck feeding it, which is where it stops informing and just wears you down.',
@@ -159,8 +159,9 @@ export const enojo: MentalState = {
       url: 'https://journals.sagepub.com/doi/10.1111/j.1467-9280.2007.01916.x',
     },
     {
-      label: 'Jill Bolte Taylor — My Stroke of Insight (the 90-second rule)',
-      url: 'https://www.ted.com/talks/jill_bolte_taylor_my_stroke_of_insight',
+      label:
+        'Verduyn & Lavrijsen (2015), Motivation and Emotion 39(1): 119–127 — Which emotions last longest and why: the role of event importance and rumination',
+      url: 'https://cris.maastrichtuniversity.nl/en/publications/which-emotions-last-longest-and-why-the-role-of-event-importance-/',
     },
   ],
 

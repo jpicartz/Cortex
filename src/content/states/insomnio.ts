@@ -163,8 +163,9 @@ export const insomnio: MentalState = {
       url: 'https://pubmed.ncbi.nlm.nih.gov/21867974/',
     },
     {
-      label: 'Huberman Lab — Master Your Sleep & Be More Alert When Awake',
-      url: 'https://www.hubermanlab.com/episode/master-your-sleep-and-be-more-alert-when-awake',
+      label:
+        'Borbély, Daan, Wirz-Justice & Deboer (2016), Journal of Sleep Research 25(2): 131–143 — The two-process model of sleep regulation: a reappraisal',
+      url: 'https://doi.org/10.1111/jsr.12371',
     },
     {
       label: 'Beaudoin et al. — Serial diverse imagining (the cognitive shuffle)',

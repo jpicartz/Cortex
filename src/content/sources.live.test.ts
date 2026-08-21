@@ -26,6 +26,13 @@ import { PAGES, STATES } from './index';
  * actually confirmed, not reaching a green tick.
  */
 const BOT_BLOCKED = new Set([
+  /*
+    Added 2026-08-20. This host was verifiable the day before — the citation did
+    not change, the host did. It now answers automated requests with a "Human
+    Verification" interstitial (HTTP 405). Worth knowing that this list grows by
+    the world moving, not only by citations being chosen badly.
+  */
+  'dash.harvard.edu',
   'doi.org', // 403s non-browser requests; resolves fine for readers
   'academic.oup.com', // Cloudflare bot gate
   'onlinelibrary.wiley.com',

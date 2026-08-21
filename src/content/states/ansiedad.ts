@@ -172,11 +172,17 @@ export const ansiedad: MentalState = {
     runs five cycles, and knowing one is often enough lowers the bar to start,
     which is the whole design of that card.
   */
+  /*
+    Sourced to the trial, not to a podcast. The previous version of this card
+    said "one to three sighs is usually enough" and pointed at a Huberman Lab
+    newsletter — a number no paper on this page reports. This is what the
+    randomised trial actually measured.
+  */
   oneTrueThing: {
     source: 1,
     text: {
-      es: 'No hacen falta muchos. Uno a tres suspiros fisiológicos suelen bastar para bajar el pico — el ejercicio de arriba trae cinco porque son gratis, no porque los necesites todos.',
-      en: 'You do not need many. One to three physiological sighs is usually enough to take the edge off — the exercise above runs five because they are free, not because you need all of them.',
+      es: 'En un ensayo aleatorizado de un mes, cinco minutos diarios de suspiro cíclico —inhalar, rematar la inhalación, exhalar largo— mejoraron el ánimo más que el mismo tiempo de meditación de atención plena, y bajaron más la frecuencia respiratoria.',
+      en: 'In a month-long randomised trial, five minutes a day of cyclic sighing — inhale, top the inhale up, long exhale — improved mood more than the same time spent on mindfulness meditation, and lowered breathing rate further.',
     },
   },
   sources: [
@@ -187,12 +193,8 @@ export const ansiedad: MentalState = {
     },
     {
       label:
-        'Huberman Lab — Breathwork Protocols for Health, Focus & Stress (the physiological sigh)',
-      url: 'https://www.hubermanlab.com/newsletter/breathwork-protocols-for-health-focus-stress',
-    },
-    {
-      label: 'Balban et al. (2023), Cell Reports Medicine — Brief structured respiration practices',
-      url: 'https://www.cell.com/cell-reports-medicine/fulltext/S2666-3791(22)00474-8',
+        'Balban et al. (2023), Cell Reports Medicine 4(1): 100895 — Brief structured respiration practices enhance mood and reduce physiological arousal (randomised trial, NCT05304000)',
+      url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9873947/',
     },
   ],
 
