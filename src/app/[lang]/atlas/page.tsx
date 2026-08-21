@@ -81,7 +81,8 @@ export default async function AtlasPage({ params }: { params: Promise<{ lang: st
       </TransitionLink>
 
       <header className="mt-6">
-        <SectionHeading>{UI.atlasTitle[lang]}</SectionHeading>
+        {/* A kicker for the h1 below, not a section of its own — see SectionHeading. */}
+        <SectionHeading as="p">{UI.atlasTitle[lang]}</SectionHeading>
         <h1 className="mt-3 font-display text-3xl leading-tight tracking-tight sm:text-4xl">
           {UI.atlasHeadline[lang]}
         </h1>

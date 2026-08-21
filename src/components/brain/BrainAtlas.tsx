@@ -52,6 +52,8 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
   const [active, setActive] = useState<Region | null>(null);
   /* Hover previews on the drawing without committing the panel to it. */
   const [hover, setHover] = useState<Region | null>(null);
+  /* What the live region says; empty except right after a node press. */
+  const [spoken, setSpoken] = useState('');
   const panelId = useId();
 
   const lit = hover ?? active;
@@ -64,9 +66,26 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
     actually out of view, so the two-column layout — where the row is already
     on screen beside the drawing — is left completely alone.
   */
-  function select(region: Region) {
+  function select(region: Region, fromFigure = false) {
     const next = active === region ? null : region;
     setActive(next);
+
+    /*
+      The list rows are a disclosure pattern — `aria-expanded` on the row, its
+      content immediately after it — so a screen reader announces those on its
+      own and a live region would only duplicate it.
+
+      The nodes on the drawing are the gap. They carry `aria-pressed` and change
+      content that lives elsewhere in the DOM, so pressing one used to announce
+      "pressed" and nothing about what appeared. This says what appeared, and
+      only for the nodes.
+    */
+    setSpoken(
+      next && fromFigure
+        ? `${REGION_INFO[next].name[lang]}. ${REGION_INFO[next].role[lang]}`
+        : '',
+    );
+
     if (!next) return;
     requestAnimationFrame(() => {
       document.getElementById(rowId(region))?.scrollIntoView({ block: 'nearest' });
@@ -167,7 +186,7 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
             <button
               key={region}
               type="button"
-              onClick={() => select(region)}
+              onClick={() => select(region, true)}
               onPointerEnter={() => setHover(region)}
               onPointerLeave={() => setHover(null)}
               onFocus={() => setHover(region)}
@@ -201,6 +220,10 @@ export function BrainAtlas({ entries, lang }: { entries: Entry[]; lang: Lang }) 
             </button>
           );
         })}
+
+        <p aria-live="polite" className="sr-only">
+          {spoken}
+        </p>
       </div>
 
       {/* ── The key. Each row is the same control as its node. ────────────── */}

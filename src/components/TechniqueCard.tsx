@@ -134,7 +134,13 @@ export function TechniqueCard({
   ) : (
     <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.7fr] lg:gap-8">
       {stepsBlock}
-      <aside>{whyBlock}</aside>
+      {/*
+        A plain div, not an `<aside>`. This is a fragment inside one card, not
+        content complementary to the page — as an aside it registered as a
+        `complementary` landmark, unnamed, several per page, cluttering the
+        landmark list a screen-reader user navigates by.
+      */}
+      <div>{whyBlock}</div>
     </div>
   );
 

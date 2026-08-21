@@ -14,8 +14,35 @@ import { TransitionLink } from './TransitionLink';
  * as a stripped-down version of something else.
  */
 export function ProsePage({ page, lang }: { page: StaticPage; lang: Lang }) {
+  /*
+    The same thin `Article` the state pages carry, and for the same reason: the
+    citation list is the one thing this site has that a wellness blog does not,
+    and it is built from the `sources` rendered below so the two cannot drift.
+
+    This page was the one shipping without it — which is backwards, since it is
+    the page most likely to be linked as evidence. Still no `author` (there is
+    no named one), no `datePublished` (not tracked) and no ratings.
+  */
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: page.seo.title[lang],
+    description: page.seo.description[lang],
+    inLanguage: lang,
+    isAccessibleForFree: true,
+    citation: page.sources.map((source) => ({
+      '@type': 'CreativeWork',
+      name: source.label,
+      url: source.url,
+    })),
+  };
+
   return (
     <article data-accent="sky" className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <AmbientField />
       <CajalField side="right" />
 

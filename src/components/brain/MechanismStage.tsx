@@ -519,7 +519,14 @@ export function MechanismStage({
               onClick={() => goTo(index)}
               aria-label={part.name[lang]}
               aria-current={index === 0}
-              className="h-1.5 w-8 rounded-full bg-accent"
+              /*
+                The dash stays 32x6; the TARGET does not. As authored these were
+                6px tall with no padding — unhittable on a phone and well under
+                the 24x24 minimum in WCAG 2.2 SC 2.5.8. The `after` pseudo grows
+                the hit area to 40x30 without touching layout or the visual
+                weight of the row. Same trick the atlas nodes use.
+              */
+              className="relative h-1.5 w-8 rounded-full bg-accent after:absolute after:-inset-x-1 after:-inset-y-3 after:content-['']"
               style={{ opacity: index === 0 ? 1 : 0.3 }}
             />
           ))}
