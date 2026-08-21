@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { allStateParams, getPageBySlug, getStateBySlug, isLang, relatedStates } from '@/content';
 import { UI } from '@/lib/ui';
+import { serialiseJsonLd } from '@/lib/jsonLd';
 import { StateIcon } from '@/components/StateIcon';
 import { SectionHeading } from '@/components/SectionHeading';
 import { StateWave } from '@/components/StateWave';
@@ -121,7 +122,7 @@ export default async function StatePage({
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serialiseJsonLd(jsonLd) }}
       />
 
       {/*

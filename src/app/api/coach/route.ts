@@ -21,7 +21,14 @@ import { buildSystemPrompt, buildUserPrompt } from '@/lib/prompt';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const MODEL = 'claude-opus-5';
+/*
+  Sonnet rather than Opus. This endpoint rewrites one curated technique for one
+  person's situation against a system prompt that already contains the answer —
+  it is a rewriting job, not a reasoning one, and Opus was several times the
+  price for it. The spend cap is the real backstop on abuse, so a cheaper model
+  also raises how much abuse the cap absorbs.
+*/
+const MODEL = 'claude-sonnet-5';
 const MAX_TOKENS = 2500; // thinking + response share this budget
 const MAX_BODY_BYTES = 8 * 1024;
 
@@ -73,9 +80,20 @@ const IS_PROD = process.env.NODE_ENV === 'production';
  */
 const SITE_ORIGIN = process.env.SITE_ORIGIN?.replace(/\/+$/, '');
 
-/** Vercel gives preview deployments generated subdomains. */
-const PREVIEW_HOST = /^cortex[a-z0-9-]*\.vercel\.app$/;
+/*
+  There is deliberately NO preview-host pattern here any more.
 
+  This used to end with `/^cortex[a-z0-9-]*\.vercel\.app$/` to let preview
+  deployments through, and that was a hole: vercel.app subdomains are claimed
+  first-come by anyone with an account, so a stranger deploying a project called
+  `cortex-abuse` got a browser origin this endpoint trusted, and with it a Claude
+  budget billed to this key.
+
+  It was also redundant. A preview deployment calls its OWN host, so `origin`
+  and `host` match and the same-host branch below already allows it. The wildcard
+  only ever admitted origins that were NOT this deployment — which is exactly the
+  set it should refuse.
+*/
 function originAllowed(origin: string | null, host: string | null): boolean {
   if (!origin) return false;
   try {
@@ -83,8 +101,7 @@ function originAllowed(origin: string | null, host: string | null): boolean {
     if (!IS_PROD && (hostname === 'localhost' || hostname === '127.0.0.1')) return true;
     if (protocol !== 'https:') return false;
     if (SITE_ORIGIN && normalised === SITE_ORIGIN) return true;
-    if (host && hostname === host.split(':')[0]) return true;
-    return PREVIEW_HOST.test(hostname);
+    return Boolean(host) && hostname === host!.split(':')[0];
   } catch {
     return false;
   }
@@ -98,6 +115,12 @@ function originAllowed(origin: string | null, host: string | null): boolean {
  * in-memory, so on serverless it is a speed bump rather than a cap. Every
  * modern browser sends `Sec-Fetch-Site`, and page JavaScript cannot forge it,
  * so a same-origin fetch passes while a plain `curl` does not.
+ *
+ * Be honest about the ceiling: a non-browser client that sets `Origin` to this
+ * host still gets through, because nothing here can distinguish it. This raises
+ * the cost of casual abuse; it does not stop a determined caller. The rate limit
+ * and the Anthropic spend cap are the actual backstops, which is part of why the
+ * model above is the cheap one.
  */
 function requestAllowed(request: Request): boolean {
   const site = request.headers.get('sec-fetch-site');
@@ -171,9 +194,10 @@ export async function POST(request: Request) {
     const stream = client.messages.stream({
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      // Opus 5 runs adaptive thinking by default. Leaving it on is deliberate:
-      // disabling it can leak <thinking> tags into the visible response.
-      // `effort` is the cost lever instead.
+      // Adaptive thinking stays on deliberately: disabling it can leak
+      // <thinking> tags into the visible response. `effort` is the cost lever,
+      // and with Sonnet underneath it the whole call is cheap enough that
+      // there is no reason to reach for the riskier saving.
       thinking: { type: 'adaptive' },
       output_config: { effort: 'low' },
       system: [

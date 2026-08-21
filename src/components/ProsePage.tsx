@@ -1,5 +1,6 @@
 import type { Lang, StaticPage } from '@/content/schema';
 import { UI } from '@/lib/ui';
+import { serialiseJsonLd } from '@/lib/jsonLd';
 import { SectionHeading } from './SectionHeading';
 import { AmbientField } from './AmbientField';
 import { CajalField } from './brain/CajalField';
@@ -55,7 +56,7 @@ export function ProsePage({ page, lang }: { page: StaticPage; lang: Lang }) {
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serialiseJsonLd(jsonLd) }}
       />
       <AmbientField />
       <CajalField side="right" />
