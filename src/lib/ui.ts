@@ -120,6 +120,22 @@ export const UI = {
     en: 'In these states it does not share the work with any other part on the map.',
   },
   atlasVia: { es: 'en', en: 'in' },
+  /*
+    The thesis figure. Wording is careful on purpose: the curve is the SHAPE the
+    two cited papers report, not their plotted data, and the caption has to say
+    so where a reader will actually see it.
+  */
+  plasticityAxis: { es: 'Materia gris', en: 'Grey matter' },
+  plasticityOnset: { es: '7 días', en: 'day 7' },
+  plasticityStop: { es: 'dejas de practicar', en: 'practice stops' },
+  plasticityAlt: {
+    es: 'Curva: la materia gris sube en la primera semana de práctica, se sostiene mientras entrenas y baja cuando dejas de hacerlo.',
+    en: 'Curve: grey matter rises in the first week of practice, holds while training continues, and falls once you stop.',
+  },
+  plasticityCaption: {
+    es: 'Esquema, no datos medidos: es la forma que describen los dos estudios citados abajo — sube rápido, se sostiene sólo con práctica, y retrocede.',
+    en: 'Schematic, not plotted data: it is the shape the two studies cited below describe — fast to rise, held only by practice, and reversible.',
+  },
   atlasTitle: { es: 'El atlas', en: 'The atlas' },
   atlasHeadline: {
     es: 'Las mismas partes, en distintos estados',

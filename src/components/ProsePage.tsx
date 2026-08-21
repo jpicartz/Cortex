@@ -4,6 +4,7 @@ import { SectionHeading } from './SectionHeading';
 import { AmbientField } from './AmbientField';
 import { CajalField } from './brain/CajalField';
 import { TransitionLink } from './TransitionLink';
+import { PlasticityCurve } from './PlasticityCurve';
 
 /**
  * A prose page: no diagram, no tools, no waveform.
@@ -37,8 +38,21 @@ export function ProsePage({ page, lang }: { page: StaticPage; lang: Lang }) {
     })),
   };
 
+  /*
+    `max-w-3xl` below `xl`, wider above it. At 1512px the old layout was a 768px
+    article holding 655px of text with 428px of dead margin either side — 57% of
+    the screen doing nothing, which is what made an otherwise decent page read
+    as a blog template.
+
+    The fix is NOT a longer line. 655px at 18px is already ~65 characters, the
+    right reading measure, and pushing past ~75ch measurably hurts reading. So
+    the text grows only modestly and the recovered space goes to a figure.
+  */
   return (
-    <article data-accent="sky" className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10">
+    <article
+      data-accent="sky"
+      className="relative mx-auto max-w-3xl px-5 py-8 sm:py-10 xl:max-w-6xl"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -72,19 +86,42 @@ export function ProsePage({ page, lang }: { page: StaticPage; lang: Lang }) {
         <p className="mt-4 max-w-prose text-lg leading-relaxed text-fg-soft">{page.lede[lang]}</p>
       </header>
 
-      <div className="mt-12 space-y-12">
+      <div className="mt-12 xl:grid xl:grid-cols-[minmax(0,44rem)_minmax(0,22rem)] xl:gap-16">
+        <div className="space-y-12">
         {page.sections.map((section) => (
           <section key={section.heading.es} data-reveal="rise">
             <SectionHeading>{section.heading[lang]}</SectionHeading>
+            {/*
+              65ch below `xl`, ~70ch above. A deliberate ceiling, not a cap left
+              in by accident: past roughly 75ch the eye loses the start of the
+              next line and long paragraphs get measurably harder to track. The
+              horizontal space goes to the figure instead, which is why there
+              is one.
+            */}
             <div className="mt-4 space-y-4">
               {section.body[lang].map((paragraph) => (
-                <p key={paragraph} className="max-w-prose text-[1.0625rem] leading-[1.75] text-fg-soft">
+                <p
+                  key={paragraph}
+                  className="max-w-prose text-[1.0625rem] leading-[1.75] text-fg-soft xl:max-w-[44rem]"
+                >
                   {paragraph}
                 </p>
               ))}
             </div>
           </section>
         ))}
+        </div>
+
+        {/*
+          Only above `xl`, and only for the page that has one. Below that the
+          column would be a third of the screen wide and the curve unreadable;
+          the argument stands on its own words there.
+        */}
+        {page.id === 'por-que-funciona' ? (
+          <div className="hidden xl:block">
+            <PlasticityCurve lang={lang} />
+          </div>
+        ) : null}
       </div>
 
       <section className="mt-14">
